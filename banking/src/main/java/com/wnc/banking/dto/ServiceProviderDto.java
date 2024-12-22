@@ -1,5 +1,6 @@
 package com.wnc.banking.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wnc.banking.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +26,7 @@ public class ServiceProviderDto {
 
     @NotNull(message = "Password is required", groups = OnCreateDto.class)
     @Size(min = 8, max = 24, message = "Password must be between 8 and 24 characters", groups = {OnCreateDto.class, OnUpdateDto.class})
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @NotNull(message = "Role is required")
@@ -35,4 +37,12 @@ public class ServiceProviderDto {
 
     @Size(min = 10, max = 100, message = "Address must be between 10 and 100 characters", groups = {OnCreateDto.class, OnUpdateDto.class})
     private String address;
+
+    public ServiceProviderDto(String name, String email, Role role, String phoneNumber, String address) {
+        this.name = name;
+        this.email = email;
+        this.role = role;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+    }
 }
