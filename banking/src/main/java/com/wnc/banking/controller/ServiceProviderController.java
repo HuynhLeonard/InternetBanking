@@ -2,6 +2,7 @@ package com.wnc.banking.controller;
 
 import com.wnc.banking.dto.ApiResponse;
 import com.wnc.banking.dto.OnCreateDto;
+import com.wnc.banking.dto.OnUpdateDto;
 import com.wnc.banking.dto.ServiceProviderDto;
 import com.wnc.banking.service.ServiceProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,23 @@ public class ServiceProviderController {
         try {
             String message = serviceProviderService.createServiceProvider(serviceProviderDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, List.of(message), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+        }
+    }
+
+    @PatchMapping("update-employee/{email}")
+    ResponseEntity<ApiResponse<String>> updateEmployee(@PathVariable String email, @RequestBody @Validated(OnUpdateDto.class) ServiceProviderDto serviceProviderDto, BindingResult result) {
+        if (result.hasErrors()) {
+            List<String> errors = result.getAllErrors()
+                    .stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .toList();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, errors, null));
+        }
+        try {
+            String message = serviceProviderService.updateServiceProvider(email, serviceProviderDto);
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of(message), null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
         }

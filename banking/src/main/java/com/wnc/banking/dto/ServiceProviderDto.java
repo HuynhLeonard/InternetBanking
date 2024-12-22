@@ -21,7 +21,7 @@ public class ServiceProviderDto {
     private String name;
 
     @NotNull(message = "Email is required", groups = OnCreateDto.class)
-    @Email(message = "Invalid email address", groups = {OnCreateDto.class, OnCreateDto.class})
+    @Email(message = "Invalid email address", groups = {OnCreateDto.class, OnUpdateDto.class})
     private String email;
 
     @NotNull(message = "Password is required", groups = OnCreateDto.class)

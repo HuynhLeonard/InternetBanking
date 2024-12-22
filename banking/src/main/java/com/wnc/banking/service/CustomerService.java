@@ -70,9 +70,6 @@ public class CustomerService {
             customer.setPhoneNumber(customerDto.getPhoneNumber());
         }
 
-//        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-//        customer.setPassword(bCryptPasswordEncoder.encode(customerDto.getPassword()));
-
         customer.setUpdatedAt(LocalDateTime.now());
 
         customerRepository.save(customer);

@@ -20,7 +20,7 @@ public class CustomerDto {
     private String name;
 
     @NotNull(message = "Email is required", groups = OnCreateDto.class)
-    @Email(message = "Invalid email address", groups = {OnCreateDto.class, OnCreateDto.class})
+    @Email(message = "Invalid email address", groups = {OnCreateDto.class, OnUpdateDto.class})
 //    @Unique(message = "Email already exists", groups = {OnCreateDto.class, OnCreateDto.class})
     private String email;
 

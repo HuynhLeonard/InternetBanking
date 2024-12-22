@@ -47,4 +47,32 @@ public class ServiceProviderService {
         serviceProviderRepository.save(serviceProvider);
         return "Create employee successfully";
     }
+
+    public String updateServiceProvider(String email, ServiceProviderDto serviceProviderDto) {
+        ServiceProvider serviceProvider = serviceProviderRepository.findByEmail(email);
+        if (serviceProvider == null) {
+            return "Cannot found employee with email: " + email;
+        }
+
+        if (serviceProviderDto.getName() != null && !serviceProviderDto.getName().isEmpty()) {
+            serviceProvider.setName(serviceProviderDto.getName());
+        }
+
+        if (serviceProviderDto.getEmail() != null && !serviceProviderDto.getEmail().isEmpty()) {
+            serviceProvider.setEmail(serviceProviderDto.getEmail());
+        }
+
+        if (serviceProviderDto.getPhoneNumber() != null && !serviceProviderDto.getPhoneNumber().isEmpty()) {
+            serviceProvider.setPhoneNumber(serviceProviderDto.getPhoneNumber());
+        }
+
+        if (serviceProviderDto.getAddress() != null && !serviceProviderDto.getAddress().isEmpty()) {
+            serviceProvider.setAddress(serviceProviderDto.getAddress());
+        }
+
+        serviceProvider.setUpdatedAt(LocalDateTime.now());
+        serviceProviderRepository.save(serviceProvider);
+
+        return "Update employee successfully";
+    }
 }
