@@ -1,15 +1,16 @@
 package com.wnc.banking.controller;
 
 import com.wnc.banking.dto.ApiResponse;
+import com.wnc.banking.dto.OnCreateDto;
 import com.wnc.banking.dto.ServiceProviderDto;
-import com.wnc.banking.entity.ServiceProvider;
 import com.wnc.banking.service.ServiceProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,6 +33,23 @@ public class ServiceProviderController {
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of("Cannot find any employees"), null));
             }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+        }
+    }
+
+    @PostMapping()
+    ResponseEntity<ApiResponse<String>> createEmployee(@RequestBody @Validated(OnCreateDto.class) ServiceProviderDto serviceProviderDto, BindingResult result) {
+        if (result.hasErrors()) {
+            List<String> errors = result.getAllErrors()
+                    .stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .toList();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, errors, null));
+        }
+        try {
+            String message = serviceProviderService.createServiceProvider(serviceProviderDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, List.of(message), null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
         }
