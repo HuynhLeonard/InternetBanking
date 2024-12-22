@@ -13,5 +13,4 @@ public interface ServiceProviderRepository extends JpaRepository<ServiceProvider
     @Query("SELECT sp FROM ServiceProvider sp WHERE sp.name <> :excludeName")
     List<ServiceProvider> findByNameNotIn(String excludeName);
     ServiceProvider findByEmail(String email);
-    boolean existsByName(String name);
 }

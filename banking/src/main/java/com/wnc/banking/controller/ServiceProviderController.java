@@ -72,4 +72,14 @@ public class ServiceProviderController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
         }
     }
+
+    @DeleteMapping("delete-employee/{email}")
+    ResponseEntity<ApiResponse<String>> deleteEmployee(@PathVariable String email) {
+        try {
+            String message = serviceProviderService.deleteServiceProvider(email);
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of(message), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+        }
+    }
 }

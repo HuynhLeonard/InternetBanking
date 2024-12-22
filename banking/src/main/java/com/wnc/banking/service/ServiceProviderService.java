@@ -75,4 +75,13 @@ public class ServiceProviderService {
 
         return "Update employee successfully";
     }
+
+    public String deleteServiceProvider(String email) {
+        ServiceProvider serviceProvider = serviceProviderRepository.findByEmail(email);
+        if (serviceProvider == null) {
+            return "Cannot found employee with email: " + email;
+        }
+        serviceProviderRepository.delete(serviceProvider);
+        return "Delete employee successfully";
+    }
 }
