@@ -5,6 +5,7 @@ import com.wnc.banking.dto.OnCreateDto;
 import com.wnc.banking.dto.OnUpdateDto;
 import com.wnc.banking.dto.ServiceProviderDto;
 import com.wnc.banking.service.ServiceProviderService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -16,14 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/service-provider")
+@RequestMapping("/api/protected/service-provider")
+@AllArgsConstructor
 public class ServiceProviderController {
     private final ServiceProviderService serviceProviderService;
-
-    @Autowired
-    public ServiceProviderController(ServiceProviderService serviceProviderService) {
-        this.serviceProviderService = serviceProviderService;
-    }
 
     @GetMapping()
     public ResponseEntity<ApiResponse<List<ServiceProviderDto>>> getAllServiceProviders() {

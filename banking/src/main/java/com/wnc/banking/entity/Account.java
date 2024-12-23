@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.Instant;
@@ -17,6 +18,11 @@ import java.util.stream.Collectors;
 @Table(name = "account")
 public class Account {
     @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(name = "id", nullable = false)
+    private String id;
+
     @Column(name = "accountNumber", nullable = false)
     private String accountNumber;
 
