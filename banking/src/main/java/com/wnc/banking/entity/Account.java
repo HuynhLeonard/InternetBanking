@@ -25,7 +25,7 @@ public class Account {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @Column(name = "accountNumber", nullable = false)
+    @Column(name = "accountNumber", nullable = false, unique = true)
     private String accountNumber;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.REMOVE)
@@ -52,9 +52,6 @@ public class Account {
     private Set<Receiver> receivers = new LinkedHashSet<>();
 
     public Account() {
-        this.accountNumber = "0" + new Random().ints(11, 0, 10)
-                .mapToObj(String::valueOf)
-                .collect(Collectors.joining());
         this.balance = 100000L;
         LocalDateTime now = LocalDateTime.now();
         this.createdAt = now;

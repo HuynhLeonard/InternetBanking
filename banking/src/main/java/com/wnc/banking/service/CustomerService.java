@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -41,7 +43,15 @@ public class CustomerService {
         customer.setCreatedAt(LocalDateTime.now());
         customer.setUpdatedAt(LocalDateTime.now());
 
+        String accountNumber;
+        do {
+            accountNumber = "0" + new Random().ints(11, 0, 10)
+                    .mapToObj(String::valueOf)
+                    .collect(Collectors.joining());
+        } while (paymentRepository.existsByAccountNumber(accountNumber));
+
         Account account = new Account();
+        account.setAccountNumber(accountNumber);
         customer.setAccount(account);
         account.setCustomer(customer);
 
