@@ -11,4 +11,5 @@ import java.util.List;
 public interface PaymentRepository extends JpaRepository<Account, Integer> {
     Account getPaymentByCustomerId(String customerId);
     List<Account> getPaymentsByCreatedAt(LocalDateTime createdAt);
+    boolean existsByAccountNumber(String accountNumber);
 }
