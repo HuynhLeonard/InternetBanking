@@ -9,4 +9,6 @@ import java.util.List;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Account, Integer> {
+    Account getPaymentByCustomerId(String customerId);
+    List<Account> getPaymentsByCreatedAt(LocalDateTime createdAt);
 }
