@@ -22,10 +22,8 @@ public class Otp {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "customerId", nullable = false)
-    @JsonIgnore
     private Customer customer;
 
-    @Size(max = 255)
     @Column(name = "otp", nullable = false)
     private String otp;
 

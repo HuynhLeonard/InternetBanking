@@ -9,7 +9,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -28,7 +30,6 @@ public class Account {
 
     @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "customerId", nullable = false)
-    @JsonIgnore
     private Customer customer;
 
     @Column(name = "balance", nullable = false)
@@ -41,6 +42,14 @@ public class Account {
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     @Column(name = "updatedAt")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "senderAccountId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Receiver> senders = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "receiverAccountId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Receiver> receivers = new LinkedHashSet<>();
 
     public Account() {
         this.accountNumber = "0" + new Random().ints(11, 0, 10)

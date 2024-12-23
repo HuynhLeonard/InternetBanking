@@ -1,5 +1,6 @@
 package com.wnc.banking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,9 +47,11 @@ public class Customer {
     private LocalDateTime updatedAt;
 
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Account account;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Otp> otps = new LinkedHashSet<>();
 
 //    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
