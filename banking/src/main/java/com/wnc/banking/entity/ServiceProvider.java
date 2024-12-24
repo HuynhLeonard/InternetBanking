@@ -32,9 +32,8 @@ public class ServiceProvider {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private Role role;
+    private String role;
 
     @Column(name = "phoneNumber")
     private String phoneNumber;

@@ -1,6 +1,5 @@
 package com.wnc.banking.repository;
 
-import com.wnc.banking.entity.Role;
 import com.wnc.banking.entity.ServiceProvider;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

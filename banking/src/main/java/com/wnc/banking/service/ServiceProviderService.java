@@ -1,7 +1,6 @@
 package com.wnc.banking.service;
 
-import com.wnc.banking.dto.ServiceProviderDto;
-import com.wnc.banking.entity.Role;
+import com.wnc.banking.dto.ServiceProviderDTO;
 import com.wnc.banking.entity.ServiceProvider;
 import com.wnc.banking.repository.ServiceProviderRepository;
 import lombok.AllArgsConstructor;
@@ -17,10 +16,10 @@ import java.util.stream.Collectors;
 public class ServiceProviderService {
     private final ServiceProviderRepository serviceProviderRepository;
 
-    public List<ServiceProviderDto> getAllServiceProviders() {
+    public List<ServiceProviderDTO> getAllServiceProviders() {
         List<ServiceProvider> serviceProviderList = serviceProviderRepository.findByNameNotIn("Admin");
         return serviceProviderList.stream()
-                .map(serviceProvider -> new ServiceProviderDto(
+                .map(serviceProvider -> new ServiceProviderDTO(
                         serviceProvider.getName(),
                         serviceProvider.getEmail(),
                         serviceProvider.getRole(),
@@ -29,7 +28,7 @@ public class ServiceProviderService {
                 .collect(Collectors.toList());
     }
 
-    public String createServiceProvider(ServiceProviderDto serviceProviderDto) {
+    public String createServiceProvider(ServiceProviderDTO serviceProviderDto) {
         ServiceProvider serviceProvider = new ServiceProvider();
 
         serviceProvider.setName(serviceProviderDto.getName());
@@ -38,7 +37,7 @@ public class ServiceProviderService {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         serviceProvider.setPassword(bCryptPasswordEncoder.encode(serviceProviderDto.getPassword()));
 
-        serviceProvider.setRole(Role.employee);
+        serviceProvider.setRole("Employee");
         serviceProvider.setPhoneNumber(serviceProviderDto.getPhoneNumber());
         serviceProvider.setAddress(serviceProviderDto.getAddress());
         serviceProvider.setCreatedAt(LocalDateTime.now());
@@ -48,7 +47,7 @@ public class ServiceProviderService {
         return "Create employee successfully";
     }
 
-    public String updateServiceProvider(String email, ServiceProviderDto serviceProviderDto) {
+    public String updateServiceProvider(String email, ServiceProviderDTO serviceProviderDto) {
         ServiceProvider serviceProvider = serviceProviderRepository.findByEmail(email);
         if (serviceProvider == null) {
             return "Cannot found employee with email: " + email;

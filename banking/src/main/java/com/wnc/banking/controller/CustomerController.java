@@ -2,8 +2,8 @@ package com.wnc.banking.controller;
 
 import com.wnc.banking.dto.ApiResponse;
 import com.wnc.banking.dto.ChangePasswordRequest;
-import com.wnc.banking.dto.CustomerDto;
-import com.wnc.banking.dto.OnUpdateDto;
+import com.wnc.banking.dto.CustomerDTO;
+import com.wnc.banking.dto.OnUpdateDTO;
 import com.wnc.banking.entity.Customer;
 import com.wnc.banking.service.CustomerService;
 import lombok.AllArgsConstructor;
@@ -63,7 +63,7 @@ public class CustomerController {
     }
 
     @PatchMapping("/update-profile/{email}")
-    ResponseEntity<ApiResponse<Void>> updateCustomer(@PathVariable String email, @RequestBody @Validated(OnUpdateDto.class) CustomerDto customerDto, BindingResult result) {
+    ResponseEntity<ApiResponse<Void>> updateCustomer(@PathVariable String email, @RequestBody @Validated(OnUpdateDTO.class) CustomerDTO customerDto, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = new ArrayList<>(result.getAllErrors()
                     .stream()
@@ -84,7 +84,7 @@ public class CustomerController {
     }
 
     @PatchMapping("/change-password/{email}")
-    ResponseEntity<ApiResponse<Void>> changePassword(@PathVariable String email, @RequestBody @Validated(OnUpdateDto.class) ChangePasswordRequest changePasswordRequest, BindingResult result) {
+    ResponseEntity<ApiResponse<Void>> changePassword(@PathVariable String email, @RequestBody @Validated(OnUpdateDTO.class) ChangePasswordRequest changePasswordRequest, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = new ArrayList<>(result.getAllErrors()
                     .stream()
@@ -107,7 +107,7 @@ public class CustomerController {
     }
 
     @PostMapping()
-    ResponseEntity<ApiResponse<Void>> createCustomer(@RequestBody @Validated(OnUpdateDto.class) CustomerDto customerDto, BindingResult result) {
+    ResponseEntity<ApiResponse<Void>> createCustomer(@RequestBody @Validated(OnUpdateDTO.class) CustomerDTO customerDto, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = result.getAllErrors()
                     .stream()

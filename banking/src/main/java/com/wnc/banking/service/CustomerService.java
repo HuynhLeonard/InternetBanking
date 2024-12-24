@@ -1,7 +1,7 @@
 package com.wnc.banking.service;
 
 import com.wnc.banking.dto.ChangePasswordRequest;
-import com.wnc.banking.dto.CustomerDto;
+import com.wnc.banking.dto.CustomerDTO;
 import com.wnc.banking.entity.Account;
 import com.wnc.banking.entity.Customer;
 import com.wnc.banking.repository.CustomerRepository;
@@ -29,7 +29,7 @@ public class CustomerService {
         return customerRepository.findByEmail(email);
     }
 
-    public String createCustomer(CustomerDto customerDto) {
+    public String createCustomer(CustomerDTO customerDto) {
         Customer customer = new Customer();
 
         customer.setName(customerDto.getName());
@@ -61,7 +61,7 @@ public class CustomerService {
         return "Create customer successfully";
     }
 
-    public String updateCustomer(String email, CustomerDto customerDto) {
+    public String updateCustomer(String email, CustomerDTO customerDto) {
         Customer customer = customerRepository.findByEmail(email);
         if (customer == null) {
             return "Cannot found customer with email: " + email;
