@@ -61,4 +61,18 @@ public class ReceiverController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
         }
     }
+
+    @DeleteMapping
+    ResponseEntity<ApiResponse<Void>> deleteReceiver(@RequestBody ReceiverDTO receiverDTO) {
+        try {
+            String message = receiverService.deleteReceiver(receiverDTO);
+            if (message.contains("Cannot")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of(message), null));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of(message), null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+        }
+    }
 }
