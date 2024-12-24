@@ -21,8 +21,12 @@ public class ReceiverService {
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
 
-    public List<Receiver> getAllReceivers() {
-        return receiverRepository.findAll();
+    public List<Receiver> getReceiversByAccountNumber(String senderAccountNumber) {
+        Account senderAccount = accountRepository.findByAccountNumber(senderAccountNumber);
+        if (senderAccount == null) {
+            return null;
+        }
+        return receiverRepository.findBySenderAccountId(senderAccount);
     }
 
     public String createReceiver(ReceiverDTO receiverDTO) {
@@ -39,28 +43,33 @@ public class ReceiverService {
             return "Cannot find receiver account";
         }
 
-        receiver.setSenderAccountId(senderAccount);
-        receiver.setReceiverAccountId(receiverAccount);
-
-        if (receiverDTO.getNickName() != null || !receiverDTO.getNickName().isEmpty()) {
-            receiver.setNickName(receiverDTO.getNickName());
+        if (receiverRepository.existsBySenderAccountIdAndReceiverAccountId(senderAccount, receiverAccount)) {
+            String message = updateReceiver(receiverDTO);
+            return message;
         } else {
-            Customer customer = customerRepository.findByAccount(receiverAccount);
-            String nickname = customer.getName();
-            receiver.setNickName(nickname);
+            receiver.setSenderAccountId(senderAccount);
+            receiver.setReceiverAccountId(receiverAccount);
+
+            if (receiverDTO.getNickName() != null && receiverDTO.getNickName().length() == 0) {
+                receiver.setNickName(receiverDTO.getNickName());
+            } else {
+                Customer customer = customerRepository.findByAccount(receiverAccount);
+                String nickname = customer.getName();
+                receiver.setNickName(nickname);
+            }
+
+            receiver.setCreatedAt(LocalDateTime.now());
+            receiver.setUpdatedAt(LocalDateTime.now());
+
+            receiverRepository.save(receiver);
+            return "Create receiver successfully";
         }
-
-        receiver.setCreatedAt(LocalDateTime.now());
-        receiver.setUpdatedAt(LocalDateTime.now());
-
-        receiverRepository.save(receiver);
-        return "Create receiver successfully";
     }
 
     public String updateReceiver(ReceiverDTO receiverDTO) {
         Account senderAccount = accountRepository.findByAccountNumber(receiverDTO.getSenderAccountNumber());
         Account receiverAccount = accountRepository.findByAccountNumber(receiverDTO.getReceiverAccountNumber());
-        Receiver receiver = receiverRepository.findBySenderAccountIdAndAndReceiverAccountId(senderAccount, receiverAccount);
+        Receiver receiver = receiverRepository.findBySenderAccountIdAndReceiverAccountId(senderAccount, receiverAccount);
 
         if (receiver == null) {
             return "Cannot find sender account and receiver account";
@@ -83,7 +92,7 @@ public class ReceiverService {
     public String deleteReceiver(ReceiverDTO receiverDTO) {
         Account senderAccount = accountRepository.findByAccountNumber(receiverDTO.getSenderAccountNumber());
         Account receiverAccount = accountRepository.findByAccountNumber(receiverDTO.getReceiverAccountNumber());
-        Receiver receiver = receiverRepository.findBySenderAccountIdAndAndReceiverAccountId(senderAccount, receiverAccount);
+        Receiver receiver = receiverRepository.findBySenderAccountIdAndReceiverAccountId(senderAccount, receiverAccount);
 
         if (receiver == null) {
             return "Cannot find sender account and receiver account";

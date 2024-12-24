@@ -29,7 +29,7 @@ public class CustomerController {
     ResponseEntity<ApiResponse<List<Customer>>> getAllCustomers() {
         try {
             List<Customer> customers = customerService.getAllCustomers();
-            if (customers != null) {
+            if (customers != null && !customers.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of("Get all customers successfully"), customers));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of("Cannot find any customers"), null));
@@ -63,7 +63,7 @@ public class CustomerController {
     }
 
     @PatchMapping("/update-profile/{email}")
-    ResponseEntity<ApiResponse<String>> updateCustomer(@PathVariable String email, @RequestBody @Validated(OnUpdateDto.class) CustomerDto customerDto, BindingResult result) {
+    ResponseEntity<ApiResponse<Void>> updateCustomer(@PathVariable String email, @RequestBody @Validated(OnUpdateDto.class) CustomerDto customerDto, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = new ArrayList<>(result.getAllErrors()
                     .stream()
@@ -84,7 +84,7 @@ public class CustomerController {
     }
 
     @PatchMapping("/change-password/{email}")
-    ResponseEntity<ApiResponse<String>> changePassword(@PathVariable String email, @RequestBody @Validated(OnUpdateDto.class) ChangePasswordRequest changePasswordRequest, BindingResult result) {
+    ResponseEntity<ApiResponse<Void>> changePassword(@PathVariable String email, @RequestBody @Validated(OnUpdateDto.class) ChangePasswordRequest changePasswordRequest, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = new ArrayList<>(result.getAllErrors()
                     .stream()
@@ -107,7 +107,7 @@ public class CustomerController {
     }
 
     @PostMapping()
-    ResponseEntity<ApiResponse<String>> createCustomer(@RequestBody @Validated(OnUpdateDto.class) CustomerDto customerDto, BindingResult result) {
+    ResponseEntity<ApiResponse<Void>> createCustomer(@RequestBody @Validated(OnUpdateDto.class) CustomerDto customerDto, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = result.getAllErrors()
                     .stream()

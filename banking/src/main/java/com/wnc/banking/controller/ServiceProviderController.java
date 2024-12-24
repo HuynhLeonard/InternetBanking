@@ -26,7 +26,7 @@ public class ServiceProviderController {
     public ResponseEntity<ApiResponse<List<ServiceProviderDto>>> getAllServiceProviders() {
         try {
             List<ServiceProviderDto> serviceProviders = serviceProviderService.getAllServiceProviders();
-            if (serviceProviders != null) {
+            if (serviceProviders != null && !serviceProviders.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of("Get all employees successfully"), serviceProviders));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of("Cannot find any employees"), null));
