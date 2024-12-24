@@ -1,8 +1,8 @@
 package com.wnc.banking.controller;
 
 import com.wnc.banking.dto.ApiResponse;
+import com.wnc.banking.dto.DeptReminderDTO;
 import com.wnc.banking.entity.DeptReminder;
-import com.wnc.banking.entity.Receiver;
 import com.wnc.banking.service.DeptReminderService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -51,4 +51,18 @@ public class DeptReminderController {
         }
     }
 
+    @PostMapping("/create")
+    ResponseEntity<ApiResponse<Void>> createDeptReminder(@RequestBody DeptReminderDTO deptReminderDTO) {
+        try {
+            List<String> message = deptReminderService.createDeptReminder(deptReminderDTO);
+
+            if (message.contains("Cannot")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, message, null));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, message, null));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+        }
+    }
 }

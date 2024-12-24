@@ -11,8 +11,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -30,23 +30,24 @@ public class ReceiverService {
         return receiverRepository.findBySenderAccountId(senderAccount);
     }
 
-    public String createReceiver(ReceiverDTO receiverDTO) {
+    public List<String> createReceiver(ReceiverDTO receiverDTO) {
         Receiver receiver = new Receiver();
 
         Account senderAccount = accountRepository.findByAccountNumber(receiverDTO.getSenderAccountNumber());
         Account receiverAccount = accountRepository.findByAccountNumber(receiverDTO.getReceiverAccountNumber());
 
         if (senderAccount == null) {
-            return "Cannot find sender account";
-        }
-
-        if (receiverAccount == null) {
-            return "Cannot find receiver account";
+            List<String> result = new ArrayList<>();
+            result.add("Cannot find sender account");
+            if (receiverAccount == null) {
+                result.add("Cannot find receiver account");
+            }
+            return result;
         }
 
         if (receiverRepository.existsBySenderAccountIdAndReceiverAccountId(senderAccount, receiverAccount)) {
             String message = updateReceiver(receiverDTO);
-            return message;
+            return List.of(message);
         } else {
             receiver.setSenderAccountId(senderAccount);
             receiver.setReceiverAccountId(receiverAccount);
@@ -63,7 +64,7 @@ public class ReceiverService {
             receiver.setUpdatedAt(LocalDateTime.now());
 
             receiverRepository.save(receiver);
-            return "Create receiver successfully";
+            return List.of("Create receiver successfully");
         }
     }
 

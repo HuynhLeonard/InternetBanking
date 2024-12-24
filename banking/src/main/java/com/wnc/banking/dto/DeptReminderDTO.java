@@ -10,7 +10,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeptReminderDTO {
+    private String senderAccountNumber;
     private String receiverAccountNumber;
     private Long amount;
-    private String message;
+    private String description;
+
 }

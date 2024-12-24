@@ -1,5 +1,6 @@
 package com.wnc.banking.service;
 
+import com.wnc.banking.dto.DeptReminderDTO;
 import com.wnc.banking.entity.Account;
 import com.wnc.banking.entity.DeptReminder;
 import com.wnc.banking.repository.AccountRepository;
@@ -7,6 +8,8 @@ import com.wnc.banking.repository.DeptReminderRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,5 +32,31 @@ public class DeptReminderService {
             return null;
         }
         return deptReminderRepository.findByReceiverAccountId(receiverAccount);
+    }
+
+    public List<String> createDeptReminder(DeptReminderDTO deptReminderDTO) {
+        DeptReminder deptReminder = new DeptReminder();
+
+        Account senderAccount = accountRepository.findByAccountNumber(deptReminderDTO.getSenderAccountNumber());
+        Account receiverAccount = accountRepository.findByAccountNumber(deptReminderDTO.getReceiverAccountNumber());
+
+        if (senderAccount == null) {
+            List<String> result = new ArrayList<>();
+            result.add("Cannot find sender account");
+            if (receiverAccount == null) {
+                result.add("Cannot find receiver account");
+            }
+            return result;
+        }
+
+        deptReminder.setSenderAccountId(senderAccount);
+        deptReminder.setReceiverAccountId(receiverAccount);
+        deptReminder.setAmount(deptReminderDTO.getAmount());
+        deptReminder.setDescription(deptReminderDTO.getDescription());
+        deptReminder.setStatus("Chưa thanh toán");
+        deptReminder.setCreatedAt(LocalDateTime.now());
+
+        deptReminderRepository.save(deptReminder);
+        return List.of("Create dept reminder successfully");
     }
 }
