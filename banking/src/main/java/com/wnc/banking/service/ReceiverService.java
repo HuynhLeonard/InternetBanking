@@ -50,7 +50,7 @@ public class ReceiverService {
             receiver.setSenderAccountId(senderAccount);
             receiver.setReceiverAccountId(receiverAccount);
 
-            if (receiverDTO.getNickName() != null && receiverDTO.getNickName().length() == 0) {
+            if (receiverDTO.getNickName() != null && receiverDTO.getNickName().isEmpty()) {
                 receiver.setNickName(receiverDTO.getNickName());
             } else {
                 Customer customer = customerRepository.findByAccount(receiverAccount);
@@ -75,7 +75,7 @@ public class ReceiverService {
             return "Cannot find sender account and receiver account";
         }
 
-        if (receiverDTO.getNickName() != null || !receiverDTO.getNickName().isEmpty()) {
+        if (receiverDTO.getNickName() != null && !receiverDTO.getNickName().isEmpty()) {
             receiver.setNickName(receiverDTO.getNickName());
         } else {
             Customer customer = customerRepository.findByAccount(receiverAccount);

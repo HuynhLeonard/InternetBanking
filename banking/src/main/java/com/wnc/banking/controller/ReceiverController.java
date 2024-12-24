@@ -40,10 +40,21 @@ public class ReceiverController {
             String message = receiverService.createReceiver(receiverDTO);
             if (message.contains("Cannot")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of(message), null));
-            } else if (message.equals("Receiver already exists")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, List.of(message), null));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of(message), null));
             }
-            else {
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+        }
+    }
+
+    @PatchMapping
+    ResponseEntity<ApiResponse<Void>> updateReceiver(@RequestBody ReceiverDTO receiverDTO) {
+        try {
+            String message = receiverService.updateReceiver(receiverDTO);
+            if (message.contains("Cannot")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of(message), null));
+            } else {
                 return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of(message), null));
             }
         } catch (Exception e) {
