@@ -28,6 +28,7 @@ public class OtpService {
         otpInfo.setEmail(email);
         otpInfo.setOtp(otp);
         otpInfo.setCreatedAt(LocalDateTime.now());
+        otpInfo.setExpiredAt(LocalDateTime.now().plusMinutes(5));
         otpRepository.save(otpInfo);
         return otp;
     }
