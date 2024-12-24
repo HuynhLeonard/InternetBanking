@@ -50,10 +50,6 @@ public class Customer {
     @JsonIgnore
     private Account account;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private Set<Otp> otps = new LinkedHashSet<>();
-
 //    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private Set<RefreshToken> refreshTokens = new LinkedHashSet<>();
 

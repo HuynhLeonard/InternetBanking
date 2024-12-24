@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -41,10 +42,11 @@ public class ServiceProvider {
     @Column(name = "address")
     private String address;
 
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
 
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     @Column(name = "updatedAt")
     private LocalDateTime updatedAt;
-
 }

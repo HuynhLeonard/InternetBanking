@@ -26,6 +26,7 @@ public class ReceiverService {
         if (senderAccount == null) {
             return null;
         }
+
         return receiverRepository.findBySenderAccountId(senderAccount);
     }
 
