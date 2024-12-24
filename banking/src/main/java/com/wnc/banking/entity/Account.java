@@ -45,11 +45,19 @@ public class Account {
 
     @OneToMany(mappedBy = "senderAccountId", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Set<Receiver> senders = new LinkedHashSet<>();
+    private Set<Receiver> remindSenders = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "receiverAccountId", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Set<Receiver> receivers = new LinkedHashSet<>();
+    private Set<Receiver> remindReceivers = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "senderAccountId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<DeptReminder> deptSenders = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "receiverAccountId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<DeptReminder> deptReceivers = new LinkedHashSet<>();
 
     public Account() {
         this.balance = 100000L;
