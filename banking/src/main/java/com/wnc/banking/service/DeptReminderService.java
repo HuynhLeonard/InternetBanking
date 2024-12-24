@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -59,4 +60,16 @@ public class DeptReminderService {
         deptReminderRepository.save(deptReminder);
         return List.of("Create dept reminder successfully");
     }
+
+    public String deleteDeptReminder(Integer deptReminderId) {
+        Optional<DeptReminder> deptReminder = deptReminderRepository.findById(deptReminderId);
+        if (deptReminder.isPresent()) {
+            deptReminderRepository.delete(deptReminder.get());
+            return "Delete dept reminder successfully";
+        } else {
+            return "Cannot find dept reminder";
+        }
+    }
+
+    public String payDeptReminder(DeptReminderDTO deptReminderDTO) {return "";}
 }
