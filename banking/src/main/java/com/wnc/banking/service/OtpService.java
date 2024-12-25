@@ -50,6 +50,7 @@ public class OtpService {
             throw new OtpVerificationException("Expired OTP code.");
         }
 
+        otpRepository.delete(otpInfo);
         return true;
     }
 
