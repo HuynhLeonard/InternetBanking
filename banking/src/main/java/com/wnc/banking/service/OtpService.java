@@ -1,11 +1,12 @@
 package com.wnc.banking.service;
 
 import com.wnc.banking.entity.Otp;
-import com.wnc.banking.entity.Customer;
+import com.wnc.banking.exception.OtpVerificationException;
 import com.wnc.banking.repository.OtpRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
 import java.util.concurrent.CompletableFuture;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,25 @@ public class OtpService {
         otpInfo.setExpiredAt(LocalDateTime.now().plusMinutes(5));
         otpRepository.save(otpInfo);
         return otp;
+    }
+
+    public boolean verifyOTP(String email, String otp) {
+        Otp otpInfo = otpRepository.findByEmail(email);
+        if (otpInfo == null) {
+            throw new OtpVerificationException("OTP not found for the provided email.");
+        }
+
+        if (!otp.equals(otpInfo.getOtp())) {
+            throw new OtpVerificationException("Wrong OTP.");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isAfter(otpInfo.getExpiredAt())) {
+            otpRepository.delete(otpInfo);
+            throw new OtpVerificationException("Expired OTP code.");
+        }
+
+        return true;
     }
 
     @Async
