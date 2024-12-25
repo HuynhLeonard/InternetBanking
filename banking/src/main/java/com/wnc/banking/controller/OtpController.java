@@ -38,13 +38,13 @@ public class OtpController {
             boolean otpSent = emailSendingFuture.get();
 
             if (otpSent) {
-                return ResponseEntity.ok().body("{\"message\": \"OTP sent successfully\"}");
+                return ResponseEntity.ok().body((new ApiResponse<>(true, List.of("OTP sent successfully"), null)));
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"message\": \"Failed to send OTP\"}");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false,List.of( "Failed to send OTP"), null));
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"message\": \"Failed to send OTP\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false,List.of( "Failed to send OTP"), null));
         }
     }
 
