@@ -265,10 +265,29 @@ CREATE TABLE `transaction` (
 --
 -- Dumping data for table `transaction`
 --
-
 LOCK TABLES `transaction` WRITE;
 /*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
 /*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
+
+DROP TABLE IF EXISTS `employee_transaction`;
+
+CREATE TABLE `employee_transaction` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `serviceProviderId` varchar(255) NOT NULL,
+  `receiverAccountId` varchar(255) NOT NULL,
+  `amount` bigint NOT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `employeeNumber` (`serviceProviderId`),
+  KEY `receiverAccountNumber` (`receiverAccountId`),
+  CONSTRAINT `transaction_ibfk_4` FOREIGN KEY (`employerNumber`) REFERENCES `service_provider` (`id`),
+  CONSTRAINT `transaction_ibfk_5` FOREIGN KEY (`receiverAccountId`) REFERENCES `account` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+LOCK TABLES `employee_transaction` WRITE;
+
+
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

@@ -11,4 +11,5 @@ import java.util.List;
 public interface DeptReminderRepository extends JpaRepository<DeptReminder, Integer> {
     List<DeptReminder> findBySenderAccountId(Account senderAccountId);
     List<DeptReminder>  findByReceiverAccountId(Account receiverAccountId);
+    DeptReminder findBySenderAccountIdAndReceiverAccountIdAndStatusAndAmount(Account senderAccountId, Account receiverAccountId, String status, Long amount);
 }
