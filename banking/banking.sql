@@ -280,7 +280,7 @@ CREATE TABLE `employee_transaction` (
   PRIMARY KEY (`id`),
   KEY `employeeNumber` (`serviceProviderId`),
   KEY `receiverAccountNumber` (`receiverAccountId`),
-  CONSTRAINT `transaction_ibfk_4` FOREIGN KEY (`employerNumber`) REFERENCES `service_provider` (`id`),
+  CONSTRAINT `transaction_ibfk_4` FOREIGN KEY (`serviceProviderId`) REFERENCES `service_provider` (`id`),
   CONSTRAINT `transaction_ibfk_5` FOREIGN KEY (`receiverAccountId`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
