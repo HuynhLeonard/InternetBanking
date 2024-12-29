@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -127,5 +128,41 @@ public class TransactionService {
     public List<EmployeeTransaction> getEmployeeTransactionByReceiverAccount(String receiverAccountId) {
         Optional<Account> receiverAccount = accountRepository.findById(receiverAccountId);
         return receiverAccount.map(employeeTransactionRepository::findByReceiverAccount).orElse(null);
+    }
+
+    public List<Transaction> getTransactionByAccount(String accountId) {
+       Optional<Account> account = accountRepository.findById(accountId);
+
+       if (account.isPresent()) {
+           List<Transaction> sendInternalTransactions = transactionRepository.findBySenderAccountAndType(account.get(),"internal");
+           List<Transaction> receiveInternalTransactions = transactionRepository.findByReceiverAccountAndType(account.get(),"internal");
+           List<Transaction> sendExternalTransactions = transactionRepository.findBySenderAccountAndType(account.get(), "external");
+           List<Transaction> receiveExternalTransactions = transactionRepository.findByReceiverAccountAndType(account.get(), "external");
+
+           List<Transaction> allTransactions = new ArrayList<>();
+           allTransactions.addAll(sendInternalTransactions);
+           allTransactions.addAll(receiveInternalTransactions);
+           allTransactions.addAll(sendExternalTransactions);
+           allTransactions.addAll(receiveExternalTransactions);
+           return allTransactions;
+       } else {
+           return null;
+       }
+    }
+
+    public List<Transaction> getDeptTransactionByAccount(String accountId) {
+        Optional<Account> account = accountRepository.findById(accountId);
+
+        if (account.isPresent()) {
+            List<Transaction> sendDeptTransactions = transactionRepository.findBySenderAccountAndType(account.get(),"dept");
+            List<Transaction> receiveDeptTransactions = transactionRepository.findByReceiverAccountAndType(account.get(),"dept");
+
+            List<Transaction> allTransactions = new ArrayList<>();
+            allTransactions.addAll(sendDeptTransactions);
+            allTransactions.addAll(receiveDeptTransactions);
+            return allTransactions;
+        } else {
+            return null;
+        }
     }
 }
