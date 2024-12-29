@@ -70,6 +70,4 @@ public class DeptReminderService {
             return "Cannot find dept reminder";
         }
     }
-
-    public String payDeptReminder(DeptReminderDTO deptReminderDTO) {return "";}
 }

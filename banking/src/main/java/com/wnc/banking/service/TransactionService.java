@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -111,5 +113,19 @@ public class TransactionService {
         employeeTransactionRepository.save(transaction);
 
         return transaction;
+    }
+
+    public List<EmployeeTransaction> getAllEmployeeTransaction() {
+        return employeeTransactionRepository.findAll();
+    }
+
+    public List<EmployeeTransaction> getEmployeeTransactionByServiceProvider(String serviceProviderId) {
+        Optional<ServiceProvider> serviceProvider = serviceProviderRepository.findById(serviceProviderId);
+        return serviceProvider.map(employeeTransactionRepository::findByServiceProvider).orElse(null);
+    }
+
+    public List<EmployeeTransaction> getEmployeeTransactionByReceiverAccount(String receiverAccountId) {
+        Optional<Account> receiverAccount = accountRepository.findById(receiverAccountId);
+        return receiverAccount.map(employeeTransactionRepository::findByReceiverAccount).orElse(null);
     }
 }
