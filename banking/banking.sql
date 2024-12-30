@@ -280,15 +280,36 @@ CREATE TABLE `employee_transaction` (
   PRIMARY KEY (`id`),
   KEY `employeeNumber` (`serviceProviderId`),
   KEY `receiverAccountNumber` (`receiverAccountId`),
-  CONSTRAINT `transaction_ibfk_4` FOREIGN KEY (`employerNumber`) REFERENCES `service_provider` (`id`),
+  CONSTRAINT `transaction_ibfk_4` FOREIGN KEY (`serviceProviderId`) REFERENCES `service_provider` (`id`),
   CONSTRAINT `transaction_ibfk_5` FOREIGN KEY (`receiverAccountId`) REFERENCES `account` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 LOCK TABLES `employee_transaction` WRITE;
-
-
+/*!40000 ALTER TABLE `employee_transaction` DISABLE KEYS */;
+/*!40000 ALTER TABLE `employee_transaction` ENABLE KEYS */;
 UNLOCK TABLES;
+
+DROP TABLE IF EXISTS `external_transaction`;
+
+CREATE TABLE `external_transaction` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `bankId` int NOT NULL,
+    `accountNumber` varchar(255) NOT NULL,
+    `foreignAccountNumber` varchar(255) NOT NULL,
+    `amount` bigint NOT NULL,
+    `theirSignature` varchar(255) not null,
+    `type` varchar(255) NOT NULL,
+    `createdAt` datetime DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `bank` (`bankId`),
+    CONSTRAINT `transaction_ibfk_6` FOREIGN KEY (`bankId`) REFERENCES `bank` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+LOCK TABLES `external_transaction` WRITE;
+/*!40000 ALTER TABLE `external_transaction` DISABLE KEYS */;
+/*!40000 ALTER TABLE `external_transaction` ENABLE KEYS */;
+UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
