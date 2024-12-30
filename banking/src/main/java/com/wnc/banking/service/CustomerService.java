@@ -4,6 +4,7 @@ import com.wnc.banking.dto.ChangePasswordRequest;
 import com.wnc.banking.dto.CustomerDTO;
 import com.wnc.banking.entity.Account;
 import com.wnc.banking.entity.Customer;
+import com.wnc.banking.repository.AccountRepository;
 import com.wnc.banking.repository.CustomerRepository;
 import com.wnc.banking.repository.PaymentRepository;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final PaymentRepository paymentRepository;
+    private final AccountRepository accountRepository;
 
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
@@ -110,5 +112,13 @@ public class CustomerService {
         customerRepository.save(customer);
 
         return "Change password successfully";
+    }
+
+    public Customer getCustomerByAccountNumber(String accountNumber) {
+        Account account = accountRepository.findByAccountNumber(accountNumber);
+        if (account == null) {
+            return null;
+        }
+        return account.getCustomer();
     }
 }
