@@ -6,13 +6,13 @@ import io.jsonwebtoken.Jwts;
 import java.util.Date;
 
 public class JwtUtil {
-    private String secretKey = "AdvancedWebApplicationDevelopment/CSC13114/Group1/HCMUS";
+    private static String secretKey = "AdvancedWebApplicationDevelopment/CSC13114/Group1/HCMUS";
 
-    public String extractEmail(String token) {
+    public static final String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String extractRole(String token) {
+    public static String extractRole(String token) {
         return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
@@ -20,12 +20,12 @@ public class JwtUtil {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public <T> T extractClaim(String token, ClaimsResolver<T> claimsResolver) {
+    public static <T> T extractClaim(String token, ClaimsResolver<T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.resolve(claims);
     }
 
-    private Claims extractAllClaims(String token) {
+    private static Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
