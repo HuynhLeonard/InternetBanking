@@ -68,14 +68,20 @@ public class InformationController {
         Account accountNumber = accountRepository.findByCustomerId(customer.getId());
 
         Map<String, Object> responseData = new HashMap<>();
-        responseData.put("accountNumber", customer.getAccount().getAccountNumber());
-        responseData.put("name", customer.getName());
-        responseData.put("id", customer.getId());
-        responseData.put("email", customer.getEmail());
-        responseData.put("phoneNumber", customer.getPhoneNumber());
-        responseData.put("address", customer.getAddress());
-
-
+        if(role.equals("customer")) {
+            responseData.put("accountNumber", customer.getAccount().getAccountNumber());
+            responseData.put("name", customer.getName());
+            responseData.put("id", customer.getId());
+            responseData.put("email", customer.getEmail());
+            responseData.put("phoneNumber", customer.getPhoneNumber());
+            responseData.put("address", customer.getAddress());
+        } else {
+            responseData.put("name", customer.getName());
+            responseData.put("id", customer.getId());
+            responseData.put("email", customer.getEmail());
+            responseData.put("phoneNumber", customer.getPhoneNumber());
+            responseData.put("address", customer.getAddress());
+        }
         return ResponseEntity.ok().body(responseData);
     }
 }
