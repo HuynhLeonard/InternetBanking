@@ -77,6 +77,8 @@ public class InformationController {
             responseData.put("email", customer.getEmail());
             responseData.put("phoneNumber", customer.getPhoneNumber());
             responseData.put("address", customer.getAddress());
+            responseData.put("balance", customer.getAccount().getBalance());
+            responseData.put("role", "customer");
         } else {
             ServiceProvider customer = serviceProviderRepository.findByEmail(email);
             responseData.put("name", customer.getName());

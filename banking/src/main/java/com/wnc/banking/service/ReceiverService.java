@@ -21,13 +21,15 @@ public class ReceiverService {
     private final AccountRepository accountRepository;
     private final CustomerRepository customerRepository;
 
+
+
     public List<Receiver> getReceiversByAccountNumber(String senderAccountNumber) {
         Account senderAccount = accountRepository.findByAccountNumber(senderAccountNumber);
         if (senderAccount == null) {
             return null;
         }
 
-        return receiverRepository.findBySenderAccountId(senderAccount);
+        return receiverRepository.findBySenderAccountId(senderAccount.getId());
     }
 
     public List<String> createReceiver(ReceiverDTO receiverDTO) {
@@ -45,14 +47,13 @@ public class ReceiverService {
             return result;
         }
 
-        if (receiverRepository.existsBySenderAccountIdAndReceiverAccountId(senderAccount, receiverAccount)) {
+        if (receiverRepository.existsBySenderAccountIdAndReceiverAccountId(senderAccount.getId(), receiverAccount.getId())) {
             String message = updateReceiver(receiverDTO);
             return List.of(message);
         } else {
-            receiver.setSenderAccountId(senderAccount);
-            receiver.setReceiverAccountId(receiverAccount);
+            receiver.setSenderAccountId(receiverDTO.getSenderAccountNumber());
+            receiver.setReceiverAccountId(receiverDTO.getReceiverAccountNumber());
             receiver.setType(receiverDTO.getType());
-            receiver.setAccountNumber(senderAccount.getAccountNumber());
 
             if (receiverDTO.getNickName() != null && receiverDTO.getNickName().isEmpty()) {
                 receiver.setNickName(receiverDTO.getNickName());
@@ -73,7 +74,7 @@ public class ReceiverService {
     public String updateReceiver(ReceiverDTO receiverDTO) {
         Account senderAccount = accountRepository.findByAccountNumber(receiverDTO.getSenderAccountNumber());
         Account receiverAccount = accountRepository.findByAccountNumber(receiverDTO.getReceiverAccountNumber());
-        Receiver receiver = receiverRepository.findBySenderAccountIdAndReceiverAccountId(senderAccount, receiverAccount);
+        Receiver receiver = receiverRepository.findBySenderAccountIdAndReceiverAccountId(senderAccount.getId(), receiverAccount.getId());
 
         if (receiver == null) {
             return "Cannot find sender account and receiver account";
@@ -96,7 +97,7 @@ public class ReceiverService {
     public String deleteReceiver(ReceiverDTO receiverDTO) {
         Account senderAccount = accountRepository.findByAccountNumber(receiverDTO.getSenderAccountNumber());
         Account receiverAccount = accountRepository.findByAccountNumber(receiverDTO.getReceiverAccountNumber());
-        Receiver receiver = receiverRepository.findBySenderAccountIdAndReceiverAccountId(senderAccount, receiverAccount);
+        Receiver receiver = receiverRepository.findBySenderAccountIdAndReceiverAccountId(senderAccount.getId(), receiverAccount.getId());
 
         if (receiver == null) {
             return "Cannot find sender account and receiver account";
