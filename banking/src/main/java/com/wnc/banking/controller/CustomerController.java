@@ -6,6 +6,13 @@ import com.wnc.banking.dto.CustomerDTO;
 import com.wnc.banking.dto.OnUpdateDTO;
 import com.wnc.banking.entity.Customer;
 import com.wnc.banking.service.CustomerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -19,12 +26,50 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "Customer", description = "Endpoints for customer management")
 @RestController
 @RequestMapping("/api/protected/customer")
 @AllArgsConstructor
+@SecurityRequirement(name = "Authorize")
 public class CustomerController {
     private final CustomerService customerService;
 
+    @Operation(
+            summary = "Get All Customers",
+            description = "Receive a list of all customers from the system"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Get All Customers Successfully",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": true,\n" +
+                                            "  \"message\": \"Get all customers successfully\",\n" +
+                                            "  \"data\": \"List{Customer{id='string', name='string', email='string', password='string', phoneNumber='string', address='string', createdAt='time', updatedAt='time'}}\"\n" +
+                                            "}"))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "Customers Not Found",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": false,\n" +
+                                            "  \"message\": \"Cannot find any customers\",\n" +
+                                            "  \"data\": \"null\"\n" +
+                                            "}"))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": false,\n" +
+                                            "  \"message\": \"Internal server error message\",\n" +
+                                            "  \"data\": \"null\"\n" +
+                                            "}")))
+    })
     @GetMapping
     ResponseEntity<ApiResponse<List<Customer>>> getAllCustomers() {
         try {
@@ -39,6 +84,63 @@ public class CustomerController {
         }
     }
 
+
+    @Operation(
+            summary = "Get Customer By Email",
+            description = "Receive customer details based on the provided email address"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Get Customer Successfully",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": true,\n" +
+                                            "  \"message\": \"Get customer with email: customer@gmail.com successfully\",\n" +
+                                            "  \"data\": \"Customer{id='string', name='string', email='string', password='string', phoneNumber='string', address='string', createdAt='time', updatedAt='time'}\"\n" +
+                                            "}"))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid Email Address",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": false,\n" +
+                                            "  \"message\": \"Invalid email address\",\n" +
+                                            "  \"data\": \"null\"\n" +
+                                            "}"))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "Customer Not Found",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": false,\n" +
+                                            "  \"message\": \"Cannot found customer with email: customer@gmail.com\",\n" +
+                                            "  \"data\": \"null\"\n" +
+                                            "}"))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": false,\n" +
+                                            "  \"message\": \"Internal server error message\",\n" +
+                                            "  \"data\": \"null\"\n" +
+                                            "}"))
+            )
+    })
+    @Parameter(
+            name = "email",
+            description = "The email address of the customer to receive",
+            required = true,
+            example = "customer@gmail.com"
+    )
     @GetMapping("/{email}")
     ResponseEntity<ApiResponse<Map<String, Object>>> getCustomerByNameOrEmail(@PathVariable String email) {
         String EMAIL_REGEX = "^[\\w-\\.]+@[\\w-]+\\.[a-z]{2,}$";
@@ -62,6 +164,56 @@ public class CustomerController {
         }
     }
 
+    @Operation(
+            summary = "Update Customer Profile",
+            description = "Update customer profile based on the provided email address"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Update Profile Successfully",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": true,\n" +
+                                            "  \"message\": \"Update customer successfully\",\n" +
+                                            "  \"data\": \"null\"\n" +
+                                            "}"))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request",
+                    content = @Content(mediaType = "application/json")
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "Customer Not Found",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": false,\n" +
+                                            "  \"message\": \"Cannot found customer with email: customer@gmail.com\",\n" +
+                                            "  \"data\": \"null\"\n" +
+                                            "}"))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": false,\n" +
+                                            "  \"message\": \"Internal server error message\",\n" +
+                                            "  \"data\": \"null\"\n" +
+                                            "}"))
+            )
+    })
+    @Parameter(
+            name = "email",
+            description = "The email address of the customer whose profile is being updated",
+            required = true,
+            example = "customer@gmail.com"
+    )
     @PatchMapping("/update-profile/{email}")
     ResponseEntity<ApiResponse<Void>> updateCustomer(@PathVariable String email, @RequestBody @Validated(OnUpdateDTO.class) CustomerDTO customerDto, BindingResult result) {
         if (result.hasErrors()) {

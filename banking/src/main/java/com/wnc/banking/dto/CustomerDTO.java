@@ -21,7 +21,6 @@ public class CustomerDTO {
 
     @NotNull(message = "Email is required", groups = OnCreateDTO.class)
     @Email(message = "Invalid email address", groups = {OnCreateDTO.class, OnUpdateDTO.class})
-//    @Unique(message = "Email already exists", groups = {OnCreateDto.class, OnCreateDto.class})
     private String email;
 
     @Pattern(regexp = "^0\\d{9}$", message = "Phone number must have 10 digits and start with 0", groups = {OnCreateDTO.class, OnUpdateDTO.class})

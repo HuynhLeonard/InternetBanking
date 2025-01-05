@@ -49,8 +49,4 @@ public class Customer {
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Account account;
-
-//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<RefreshToken> refreshTokens = new LinkedHashSet<>();
-
 }
