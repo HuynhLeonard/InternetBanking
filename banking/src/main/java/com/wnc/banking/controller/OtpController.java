@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @RestController
-@RequestMapping("/otp")
+@RequestMapping("/api/otp")
 public class OtpController {
     @Autowired
     private OtpService otpService;
