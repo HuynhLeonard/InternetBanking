@@ -13,7 +13,7 @@ import java.util.UUID;
 @Component
 public class JwtTokenProvider {
     private final String SECRET_KEY = "AdvancedWebApplicationDevelopment/CSC13114/Group1/HCMUS";
-    private final long JWT_EXPIRATION = 5 * 60;
+    private final long JWT_EXPIRATION = 3600 * 60;
     public final long REFRESH_EXPIRATION = 7 * 24 * 60 * 60;
 
     public String generateAccessToken(String email, String role) {

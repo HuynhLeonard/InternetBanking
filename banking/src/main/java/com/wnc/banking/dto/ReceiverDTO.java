@@ -13,4 +13,5 @@ public class ReceiverDTO {
     private String senderAccountNumber;
     private String receiverAccountNumber;
     private String nickName;
+    private String type;
 }

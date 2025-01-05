@@ -51,6 +51,8 @@ public class ReceiverService {
         } else {
             receiver.setSenderAccountId(senderAccount);
             receiver.setReceiverAccountId(receiverAccount);
+            receiver.setType(receiverDTO.getType());
+            receiver.setAccountNumber(senderAccount.getAccountNumber());
 
             if (receiverDTO.getNickName() != null && receiverDTO.getNickName().isEmpty()) {
                 receiver.setNickName(receiverDTO.getNickName());
