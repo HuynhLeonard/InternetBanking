@@ -53,11 +53,11 @@ public class AuthController {
                     content = @Content(mediaType = "application/json",
                             examples = {
                                     @ExampleObject(
-                                            name = "Cannot found user via email",
+                                            name = "User not found",
                                             description = "The email address provided not exists in the system",
                                             value = "{\n" +
                                                     "  \"success\": false,\n" +
-                                                    "  \"message\": \"Cannot found user with email: email@123\",\n" +
+                                                    "  \"message\": \"Cannot found user with email: user@gmail.com\",\n" +
                                                     "  \"data\": \"null\"\n" +
                                                     "}"),
                                     @ExampleObject(
@@ -163,11 +163,11 @@ public class AuthController {
                                                     "  \"data\": \"null\"\n" +
                                                     "}"),
                                     @ExampleObject(
-                                            name = "Cannot found user via refresh token",
+                                            name = "User not found",
                                             description = "Extracted data from refresh token is not valid",
                                             value = "{\n" +
                                                     "  \"success\": false,\n" +
-                                                    "  \"message\": \"Cannot found user with id: user123\",\n" +
+                                                    "  \"message\": \"Cannot found user with id: userID\",\n" +
                                                     "  \"data\": \"null\"\n" +
                                                     "}"),
                                     @ExampleObject(
