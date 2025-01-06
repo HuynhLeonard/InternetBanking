@@ -11,6 +11,11 @@ import com.wnc.banking.entity.PartnerBank;
 import com.wnc.banking.service.HmacService;
 import com.wnc.banking.service.PartnerService;
 import com.wnc.banking.service.SignatureService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springdoc.core.service.RequestBodyService;
 import org.springframework.http.HttpStatus;
@@ -24,6 +29,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
+@Tag(name = "Partner", description = "Endpoints for managing partner - the other banks")
 @RestController
 @RequestMapping("/api/external")
 @AllArgsConstructor
@@ -37,6 +43,65 @@ public class PartnerController {
     private PrivateKey privateKey;
     private SignatureService signatureService;
 
+    @Operation(
+            summary = "Get Customer Profile For Partner",
+            description = "Receive customer details for partner based on the provided request and header"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Get Customer Successfully",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": true,\n" +
+                                            "  \"message\": \"Get the customer info successfully\",\n" +
+                                            "  \"data\": \"PartnerGetAccountResponse{customerName='string', balance='string'}\"\n" +
+                                            "}"))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Expired request",
+                                            description = "The request sent from partner is expired",
+                                            value = "{\n" +
+                                                    "  \"success\": false,\n" +
+                                                    "  \"message\": \"Expired request\",\n" +
+                                                    "  \"data\": \"null\"\n" +
+                                                    "}"),
+                                    @ExampleObject(
+                                            name = "Bank not found",
+                                            description = "The bank id provided is not exists in the system",
+                                            value = "{\n" +
+                                                    "  \"success\": false,\n" +
+                                                    "  \"message\": \"Bank not found\",\n" +
+                                                    "  \"data\": \"null\"\n" +
+                                                    "}"),
+                                    @ExampleObject(
+                                            name = "Invalid request",
+                                            description = "The request sent from partner edited",
+                                            value = "{\n" +
+                                                    "  \"success\": false,\n" +
+                                                    "  \"message\": \"Request edited by untrusted source\",\n" +
+                                                    "  \"data\": \"null\"\n" +
+                                                    "}")
+                            })
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": false,\n" +
+                                            "  \"message\": \"Internal server error message\",\n" +
+                                            "  \"data\": \"null\"\n" +
+                                            "}"))
+            )
+    })
     @PostMapping("/customer")
     public ResponseEntity<ApiResponse<?>> getCustomer(@RequestBody GetAccountInfoRequest body, @RequestHeader("HMAC") String hashed) {
         try {
@@ -69,7 +134,73 @@ public class PartnerController {
         }
     }
 
-
+    @Operation(
+            summary = "Transaction With Account From Partner",
+            description = "Transaction money from internal account to account from partner based on the provided request and header"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Account Transaction Successfully",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": true,\n" +
+                                            "  \"message\": \"Deposit to account: 012345678910 successfully!\",\n" +
+                                            "  \"data\": \"ExternalTransaction{accountNumber='string', amount='long', type='string', createdAt='time', foreignAccountNumber='string'}\"\n" +
+                                            "}"))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Expired request",
+                                            description = "The request sent from partner is expired",
+                                            value = "{\n" +
+                                                    "  \"success\": false,\n" +
+                                                    "  \"message\": \"Expired request\",\n" +
+                                                    "  \"data\": \"null\"\n" +
+                                                    "}"),
+                                    @ExampleObject(
+                                            name = "Bank not found",
+                                            description = "The bank id provided is not exists in the system",
+                                            value = "{\n" +
+                                                    "  \"success\": false,\n" +
+                                                    "  \"message\": \"Bank not found\",\n" +
+                                                    "  \"data\": \"null\"\n" +
+                                                    "}"),
+                                    @ExampleObject(
+                                            name = "Invalid request",
+                                            description = "The request sent from partner edited",
+                                            value = "{\n" +
+                                                    "  \"success\": false,\n" +
+                                                    "  \"message\": \"Request edited by untrusted source\",\n" +
+                                                    "  \"data\": \"null\"\n" +
+                                                    "}"),
+                                    @ExampleObject(
+                                            name = "Invalid signature",
+                                            description = "The signature provided is not correct",
+                                            value = "{\n" +
+                                                    "  \"success\": false,\n" +
+                                                    "  \"message\": \"Invalid signature\",\n" +
+                                                    "  \"data\": \"null\"\n" +
+                                                    "}")
+                            })
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": false,\n" +
+                                            "  \"message\": \"Internal server error message\",\n" +
+                                            "  \"data\": \"null\"\n" +
+                                            "}"))
+            )
+    })
     @PostMapping("/customer/deposit")
     public ResponseEntity<ApiResponse<?>> deposit(@RequestBody DepositRequest body, @RequestHeader("HMAC") String hashed, @RequestHeader("RSA-Signature") String signature) {
         try {
