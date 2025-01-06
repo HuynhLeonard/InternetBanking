@@ -4,6 +4,7 @@ import com.wnc.banking.dto.ApiResponse;
 import com.wnc.banking.entity.Account;
 import com.wnc.banking.entity.ServiceProvider;
 import com.wnc.banking.repository.AccountRepository;
+import com.wnc.banking.repository.CustomerRepository;
 import com.wnc.banking.repository.ServiceProviderRepository;
 import com.wnc.banking.security.JwtUtil;
 import com.wnc.banking.service.CustomerService;
@@ -26,8 +27,9 @@ public class InformationController {
     private final CustomerService customerService;
     private final AccountRepository accountRepository;
     private final ServiceProviderRepository serviceProviderRepository;
+    private final CustomerRepository customerRepository;
 
-    @PostMapping("get-info/{accountNumber}")
+    @GetMapping("get-info/{accountNumber}")
     ResponseEntity<ApiResponse<Map<String, Object>>> getCustomerByNameOrEmail(@PathVariable String accountNumber) {
         if (accountNumber != null && !accountNumber.isEmpty()) {
             try {
@@ -87,6 +89,24 @@ public class InformationController {
             responseData.put("phoneNumber", customer.getPhoneNumber());
             responseData.put("address", customer.getAddress());
         }
+        return ResponseEntity.ok().body(responseData);
+    }
+
+    @GetMapping("account/{accountNumber}")
+    public ResponseEntity<?> getAccount(@PathVariable String accountNumber) throws InstantiationException, IllegalAccessException {
+        Account account = accountRepository.findByAccountNumber(accountNumber);
+
+        Map<String, Object> responseData = new HashMap<>();
+        Customer customer = customerRepository.findByAccount(account);
+        responseData.put("accountNumber", accountNumber);
+        responseData.put("name", customer.getName());
+        responseData.put("id", customer.getId());
+        responseData.put("email", customer.getEmail());
+        responseData.put("phoneNumber", customer.getPhoneNumber());
+        responseData.put("address", customer.getAddress());
+        responseData.put("balance", customer.getAccount().getBalance());
+        responseData.put("role", "customer");
+
         return ResponseEntity.ok().body(responseData);
     }
 }

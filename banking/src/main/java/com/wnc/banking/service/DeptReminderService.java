@@ -24,7 +24,7 @@ public class DeptReminderService {
         if (senderAccount == null) {
             return null;
         }
-        return deptReminderRepository.findBySenderAccountId(senderAccount);
+        return deptReminderRepository.findDeptReminderBySenderAccountIdOrReceiverAccountId(senderAccountNumber,senderAccountNumber);
     }
 
     public List<DeptReminder> getByReceiverAccountNumber(String receiverAccountNumber) {
@@ -32,7 +32,7 @@ public class DeptReminderService {
         if (receiverAccount == null) {
             return null;
         }
-        return deptReminderRepository.findByReceiverAccountId(receiverAccount);
+        return deptReminderRepository.findByReceiverAccountId(receiverAccount.getAccountNumber());
     }
 
     public List<String> createDeptReminder(DeptReminderDTO deptReminderDTO) {
@@ -50,10 +50,12 @@ public class DeptReminderService {
             return result;
         }
 
-        deptReminder.setSenderAccountId(senderAccount);
-        deptReminder.setReceiverAccountId(receiverAccount);
+        deptReminder.setSenderAccountId(senderAccount.getAccountNumber());
+        deptReminder.setReceiverAccountId(receiverAccount.getAccountNumber());
         deptReminder.setAmount(deptReminderDTO.getAmount());
         deptReminder.setDescription(deptReminderDTO.getDescription());
+        deptReminder.setSenderUserName(senderAccount.getCustomer().getName());
+        deptReminder.setReceiverUserName(receiverAccount.getCustomer().getName());
         deptReminder.setStatus("Chưa thanh toán");
         deptReminder.setCreatedAt(LocalDateTime.now());
 

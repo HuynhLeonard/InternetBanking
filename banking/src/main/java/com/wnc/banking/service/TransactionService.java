@@ -45,7 +45,7 @@ public class TransactionService {
                 // Check transaction type
                 if (type.equals("internal") || type.equals("dept")) {
                     if (type.equals("dept")) {
-                        DeptReminder reminder = deptReminderRepository.findBySenderAccountIdAndReceiverAccountIdAndStatusAndAmount(receiverAccount, senderAccount, "Chưa thanh toán", transaction.getAmount());
+                        DeptReminder reminder = deptReminderRepository.findBySenderAccountIdAndReceiverAccountIdAndStatusAndAmount(receiverAccount.getAccountNumber(), senderAccount.getAccountNumber(), "Chưa thanh toán", transaction.getAmount());
                         if (reminder == null) {
                             throw new Exception("Dept reminder not found");
                         }
@@ -68,7 +68,7 @@ public class TransactionService {
 
 
                 if (type.equals("dept")) {
-                    DeptReminder reminder = deptReminderRepository.findBySenderAccountIdAndReceiverAccountIdAndStatusAndAmount(receiverAccount, senderAccount, "Chưa thanh toán", transaction.getAmount());
+                    DeptReminder reminder = deptReminderRepository.findBySenderAccountIdAndReceiverAccountIdAndStatusAndAmount(receiverAccount.getAccountNumber(), senderAccount.getAccountNumber(), "Chưa thanh toán", transaction.getAmount());
                     reminder.setStatus("Đã thanh toán");
                     deptReminderRepository.save(reminder);
                 }
