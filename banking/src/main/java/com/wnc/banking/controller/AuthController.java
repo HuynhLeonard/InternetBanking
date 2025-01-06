@@ -133,7 +133,7 @@ public class AuthController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
-                    description = "Refreshing Access Token Successfully",
+                    description = "Access Token Refreshed Successfully",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(
                                     value = "{\n" +

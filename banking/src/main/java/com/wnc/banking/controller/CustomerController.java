@@ -168,7 +168,7 @@ public class CustomerController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
-                    description = "Update Profile Successfully",
+                    description = "Profile Updated Successfully",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(
                                     value = "{\n" +
@@ -261,16 +261,17 @@ public class CustomerController {
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .toList());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, errors, null));
-        }
-        try {
-            String message = customerService.updateCustomer(email, customerDto);
-            if (!message.contains("Cannot found customer")) {
-                return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of(message), null));
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of(message), null));
+        } else {
+            try {
+                String message = customerService.updateCustomer(email, customerDto);
+                if (!message.contains("Cannot found customer")) {
+                    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of(message), null));
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of(message), null));
+                }
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
             }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
         }
     }
 
@@ -382,18 +383,19 @@ public class CustomerController {
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .toList());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, errors, null));
-        }
-        try {
-            String message = customerService.changePassword(email, changePasswordRequest);
-            if (message.contains("Old password is incorrect")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, List.of(message), null));
-            } else if (message.contains("Cannot found customer")) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of(message), null));
-            } else {
-                return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of(message), null));
+        } else {
+            try {
+                String message = customerService.changePassword(email, changePasswordRequest);
+                if (message.contains("Old password is incorrect")) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, List.of(message), null));
+                } else if (message.contains("Cannot found customer")) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of(message), null));
+                } else {
+                    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of(message), null));
+                }
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
             }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
         }
     }
 
@@ -504,12 +506,13 @@ public class CustomerController {
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .toList();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, errors, null));
-        }
-        try {
-            String message = customerService.createCustomer(customerDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, List.of(message), null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+        } else {
+            try {
+                String message = customerService.createCustomer(customerDto);
+                return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, List.of(message), null));
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+            }
         }
     }
 }
