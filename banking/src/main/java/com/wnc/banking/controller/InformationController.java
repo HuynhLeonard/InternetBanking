@@ -5,6 +5,13 @@ import com.wnc.banking.entity.Account;
 import com.wnc.banking.repository.AccountRepository;
 import com.wnc.banking.security.JwtUtil;
 import com.wnc.banking.service.CustomerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,13 +24,71 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "Information", description = "Endpoints for managing customer information")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/protected/information")
+@SecurityRequirement(name = "Authorize")
 public class InformationController {
     private final CustomerService customerService;
     private final AccountRepository accountRepository;
 
+    @Operation(
+            summary = "Get Customer Profile By Account Number",
+            description = "Receive customer profile details by a specific account number"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Get Customer Profile Successfully",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": true,\n" +
+                                            "  \"message\": [\"Get customer with account number: 012345678910 successfully\"],\n" +
+                                            "  \"data\": [\"Customer{accountNumber='string', name='string', id='string', email='string', phoneNumber='string', address='string'}\"]\n" +
+                                            "}"))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid Account Number",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": false,\n" +
+                                            "  \"message\": \"Invalid account number\",\n" +
+                                            "  \"data\": \"null\"\n" +
+                                            "}"))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "Customer Not Found",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                            value = "{\n" +
+                                                    "  \"success\": false,\n" +
+                                                    "  \"message\": \"Cannot found customer with account number: 012345678910\",\n" +
+                                                    "  \"data\": \"null\"\n" +
+                                                    "}"))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"success\": false,\n" +
+                                            "  \"message\": [\"Internal server error\"],\n" +
+                                            "  \"data\": null\n" +
+                                            "}"))
+            )
+    })
+    @Parameter(
+            name = "accountNumber",
+            description = "The account number of the customer whose profile is being got",
+            required = true,
+            example = "012345678910"
+    )
     @PostMapping("get-info/{accountNumber}")
     ResponseEntity<ApiResponse<Map<String, Object>>> getCustomerByNameOrEmail(@PathVariable String accountNumber) {
         if (accountNumber != null && !accountNumber.isEmpty()) {
@@ -55,6 +120,28 @@ public class InformationController {
         }
     }
 
+    @Operation(
+            summary = "Get User Profile By Header",
+            description = "Receive user profile details by header information"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Get User Profile Successfully",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\r\n  \"response\": [\r\n    \"Customer{accountNumber=\'string\', name=\'string\', id=\'string\', email=\'string\', phoneNumber=\'string\', address=\'string\'}\",\r\n    \"OR\",\r\n    \"Service provider{name=\'string\', id=\'string\', email=\'string\', phoneNumber=\'string\', address=\'string\'}\"\r\n  ]\r\n}"))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid Account Number",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"response\": [\"Invalid Authorization header\"]\n" +
+                                            "}"))
+            )
+    })
     @GetMapping()
     public ResponseEntity<?> getUserInfo(@RequestHeader("Authorization") String authorizationHeader) throws InstantiationException, IllegalAccessException {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
