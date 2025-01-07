@@ -29,17 +29,33 @@ public class CustomerController {
     private final AccountRepository accountRepository;
 
     @GetMapping
-    ResponseEntity<ApiResponse<List<Customer>>> getAllCustomers() {
-        try {
-            List<Customer> customers = customerService.getAllCustomers();
-            if (customers != null && !customers.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of("Get all customers successfully"), customers));
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of("Cannot find any customers"), null));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+    ResponseEntity<?> getAllCustomers() {
+//        try {
+//            List<Customer> customers = customerService.getAllCustomers();
+//            if (customers != null && !customers.isEmpty()) {
+//                return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of("Get all customers successfully"), customers));
+//            } else {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of("Cannot find any customers"), null));
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+//        }
+        List<Customer> customers = customerService.getAllCustomers();
+        List<Map<String,Object>> dataResponse = new ArrayList<>();
+        for (Customer customer : customers) {
+            Map<String,Object> data = new HashMap<>();
+            data.put("accountNumber", customer.getAccount().getAccountNumber());
+            data.put("name", customer.getName());
+            data.put("id", customer.getId());
+            data.put("email", customer.getEmail());
+            data.put("phoneNumber", customer.getPhoneNumber());
+            data.put("address", customer.getAddress());
+            data.put("balance", customer.getAccount().getBalance());
+            data.put("accounntId", customer.getAccount().getId());
+            data.put("role", "customer");
+            dataResponse.add(data);
         }
+        return ResponseEntity.status(HttpStatus.OK).body(dataResponse);
     }
 
     @GetMapping("/{email}")
