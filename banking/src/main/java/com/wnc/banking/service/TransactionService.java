@@ -149,6 +149,7 @@ public class TransactionService {
                transactionResponse.setSenderAccountName(transaction.getSenderAccount().getCustomer().getName());
                transactionResponse.setSenderAccountNumber(transaction.getSenderAccount().getAccountNumber());
                // adding
+               transactionResponse.setCreatedAt(transaction.getCreatedAt());
                allSendTransactions.add(transactionResponse);
            }
            List<Transaction> receiveInternalTransactions = transactionRepository.findByReceiverAccountAndType(account.get(),"internal");
@@ -165,6 +166,7 @@ public class TransactionService {
                transactionResponse.setSenderAccountNumber(transaction.getSenderAccount().getCustomer().getName());
                transactionResponse.setSenderAccountName(transaction.getSenderAccount().getAccountNumber());
                // adding
+               transactionResponse.setCreatedAt(transaction.getCreatedAt());
                allReceiveTransactions.add(transactionResponse);
            }
            List<Transaction> sendExternalTransactions = transactionRepository.findBySenderAccountAndType(account.get(), "external");

@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,4 +22,6 @@ public class TransactionResponse {
     private Long amount;
     private String description;
     private String type;
+    private Instant createdAt;
+
 }
