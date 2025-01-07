@@ -154,7 +154,7 @@ public class TransactionService {
            }
            List<Transaction> receiveInternalTransactions = transactionRepository.findByReceiverAccountAndType(account.get(),"internal");
            List<TransactionResponse> allReceiveTransactions = new ArrayList<>();
-           for (Transaction transaction : sendInternalTransactions) {
+           for (Transaction transaction : receiveInternalTransactions) {
                TransactionResponse transactionResponse = new TransactionResponse();
                transactionResponse.setAmount(transaction.getAmount());
                transactionResponse.setDescription(transaction.getDescription());
