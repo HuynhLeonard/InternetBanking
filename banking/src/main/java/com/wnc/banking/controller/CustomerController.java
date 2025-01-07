@@ -4,7 +4,9 @@ import com.wnc.banking.dto.ApiResponse;
 import com.wnc.banking.dto.ChangePasswordRequest;
 import com.wnc.banking.dto.CustomerDTO;
 import com.wnc.banking.dto.OnUpdateDTO;
+import com.wnc.banking.entity.Account;
 import com.wnc.banking.entity.Customer;
+import com.wnc.banking.repository.AccountRepository;
 import com.wnc.banking.service.CustomerService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -24,6 +26,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class CustomerController {
     private final CustomerService customerService;
+    private final AccountRepository accountRepository;
 
     @GetMapping
     ResponseEntity<ApiResponse<List<Customer>>> getAllCustomers() {
@@ -121,5 +124,27 @@ public class CustomerController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
         }
+    }
+
+    @GetMapping("bank/{bankId}/users/{accountNumber}")
+    ResponseEntity<?> getCustomerByBankIdAndAccountNumber(@PathVariable String bankId, @PathVariable String accountNumber) {
+
+        Map<String, Object> responseData = new HashMap<>();
+        if(bankId.equals("0")) {
+            Customer customer = customerService.getCustomerByAccountNumber(accountNumber);
+            Account account = accountRepository.findByAccountNumber(accountNumber);
+
+            responseData.put("accountNumber", accountNumber);
+            responseData.put("name", customer.getName());
+            responseData.put("id", customer.getId());
+            responseData.put("email", customer.getEmail());
+            responseData.put("phoneNumber", customer.getPhoneNumber());
+            responseData.put("address", customer.getAddress());
+            responseData.put("balance", customer.getAccount().getBalance());
+            responseData.put("role", "customer");
+            responseData.put("bankId", bankId);
+        }
+
+        return ResponseEntity.ok(responseData);
     }
 }
