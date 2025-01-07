@@ -107,7 +107,7 @@ public class ReceiverController {
 
     @Operation(
             summary = "Create New Receiver",
-            description = "Create a new receiver with the provided details"
+            description = "Create and add a new receiver to receivers list for sender account with the provided details"
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
