@@ -29,6 +29,8 @@ public class Receiver {
 //    @JoinColumn(name = "receiverAccountId", nullable = false)
     private String receiverAccountId;
 
+    private Integer bankId;
+
     private String Type;
 
     @Column(name = "nickName")

@@ -14,4 +14,6 @@ public class ReceiverDTO {
     private String receiverAccountNumber;
     private String nickName;
     private String type;
+    private Integer bankId;
+
 }
