@@ -183,7 +183,7 @@ public class DeptReminderController {
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
+                    responseCode = "201",
                     description = "Dept Reminder Created Successfully",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(
@@ -298,7 +298,7 @@ public class DeptReminderController {
                 if (message.contains("Cannot")) {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, message, null));
                 } else {
-                    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, message, null));
+                    return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, message, null));
                 }
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));

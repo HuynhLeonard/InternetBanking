@@ -160,7 +160,7 @@ public class OtpController {
             if (isValid) {
                 return ResponseEntity.ok((new ApiResponse<>(true, List.of("OTP verified successfully."), null)));
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false,List.of( "Invalid or expired OTP."), null));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, List.of( "Invalid or expired OTP."), null));
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
