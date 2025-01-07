@@ -163,8 +163,8 @@ public class TransactionService {
                transactionResponse.setReceiverAccountName(transaction.getReceiverAccount().getCustomer().getName());
                transactionResponse.setReceiverAccountNumber(transaction.getReceiverAccount().getAccountNumber());
                //
-               transactionResponse.setSenderAccountNumber(transaction.getSenderAccount().getCustomer().getName());
-               transactionResponse.setSenderAccountName(transaction.getSenderAccount().getAccountNumber());
+               transactionResponse.setSenderAccountName(transaction.getSenderAccount().getCustomer().getName());
+               transactionResponse.setSenderAccountNumber(transaction.getSenderAccount().getAccountNumber());
                // adding
                transactionResponse.setCreatedAt(transaction.getCreatedAt());
                allReceiveTransactions.add(transactionResponse);
