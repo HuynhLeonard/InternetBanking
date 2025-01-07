@@ -3,6 +3,7 @@ package com.wnc.banking.controller;
 import com.wnc.banking.dto.ApiResponse;
 import com.wnc.banking.dto.EmployeeTransactionDTO;
 import com.wnc.banking.dto.TransactionDTO;
+import com.wnc.banking.dto.TransactionResponse;
 import com.wnc.banking.entity.EmployeeTransaction;
 import com.wnc.banking.entity.Transaction;
 import com.wnc.banking.service.TransactionService;
@@ -87,9 +88,9 @@ public class TransactionController {
     }
 
     @GetMapping("/transaction/account/{id}")
-    public ResponseEntity<ApiResponse<List<Transaction>>> getTransactionByAccount(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<List<TransactionResponse>>> getTransactionByAccount(@PathVariable String id) {
         try {
-            List<Transaction> transactions = transactionService.getTransactionByAccount(id);
+            List<TransactionResponse> transactions = transactionService.getTransactionByAccount(id);
             if (transactions == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, List.of("Cannot find account with id: " + id), null));
             } else if (transactions.isEmpty()) {
