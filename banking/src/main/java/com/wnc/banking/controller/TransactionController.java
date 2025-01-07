@@ -230,7 +230,7 @@ public class TransactionController {
         } else {
             try {
                 EmployeeTransaction created = transactionService.createEmployeeTransaction(request);
-                return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(false,  List.of("Employee Transaction created!"), created));
+                return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true,  List.of("Employee Transaction created!"), created));
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
             }
