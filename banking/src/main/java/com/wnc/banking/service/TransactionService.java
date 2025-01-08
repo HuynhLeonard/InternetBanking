@@ -209,12 +209,28 @@ public class TransactionService {
                allSendDebtTransactions.add(transactionResponse);
            }
 
+           // Nhan vien nap tien
+           List<TransactionResponse> allResponseEmployeeTransaction = new ArrayList<>();
+           List<EmployeeTransaction> allEmployeeTransactions = employeeTransactionRepository.findByReceiverAccount(account.get());
+           for(EmployeeTransaction employeeTransaction : allEmployeeTransactions) {
+               TransactionResponse transactionResponse = new TransactionResponse();
+               transactionResponse.setAmount(employeeTransaction.getAmount());
+               transactionResponse.setDescription("Deposit by employee to " + account.get().getCustomer().getName());
+               transactionResponse.setType("Employee Transaction");
+               transactionResponse.setSenderAccountName("Employee Transaction");
+               transactionResponse.setReceiverAccountName(account.get().getCustomer().getName());
+               transactionResponse.setReceiverAccountNumber(account.get().getAccountNumber());
+               //adding
+               transactionResponse.setCreatedAt(employeeTransaction.getCreatedAt());
+               allResponseEmployeeTransaction.add(transactionResponse);
+           }
 
            List<TransactionResponse> allTransactions = new ArrayList<>();
            allTransactions.addAll(allSendTransactions);
            allTransactions.addAll(allReceiveTransactions);
            allTransactions.addAll(allReceiveDebtTransactions);
            allTransactions.addAll(allSendDebtTransactions);
+           allTransactions.addAll(allResponseEmployeeTransaction);
            //allTransactions.addAll(sendExternalTransactions);
            //allTransactions.addAll(receiveExternalTransactions);
            return allTransactions;
