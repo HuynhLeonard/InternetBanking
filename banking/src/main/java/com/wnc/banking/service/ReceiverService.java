@@ -55,7 +55,7 @@ public class ReceiverService {
             receiver.setReceiverAccountId(receiverDTO.getReceiverAccountNumber());
             receiver.setType(receiverDTO.getType());
             receiver.setBankId(receiverDTO.getBankId());
-            if (receiverDTO.getNickName() != null && receiverDTO.getNickName().isEmpty()) {
+            if (receiverDTO.getNickName() != null && !receiverDTO.getNickName().isEmpty()) {
                 receiver.setNickName(receiverDTO.getNickName());
             } else {
                 Customer customer = customerRepository.findByAccount(receiverAccount);
