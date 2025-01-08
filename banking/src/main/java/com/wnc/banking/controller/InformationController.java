@@ -74,6 +74,7 @@ public class InformationController {
         if(role.equals("customer")) {
             Customer customer = customerService.getCustomerByEmail(email);
             responseData.put("accountNumber", customer.getAccount().getAccountNumber());
+            responseData.put("accountId", customer.getAccount().getId());
             responseData.put("name", customer.getName());
             responseData.put("id", customer.getId());
             responseData.put("email", customer.getEmail());

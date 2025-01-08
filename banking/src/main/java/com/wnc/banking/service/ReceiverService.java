@@ -95,9 +95,9 @@ public class ReceiverService {
     }
 
     public String deleteReceiver(ReceiverDTO receiverDTO) {
-        Account senderAccount = accountRepository.findByAccountNumber(receiverDTO.getSenderAccountNumber());
-        Account receiverAccount = accountRepository.findByAccountNumber(receiverDTO.getReceiverAccountNumber());
-        Receiver receiver = receiverRepository.findBySenderAccountIdAndReceiverAccountId(senderAccount.getId(), receiverAccount.getId());
+//        Account senderAccount = accountRepository.findByAccountNumber(receiverDTO.getSenderAccountNumber());
+//        Account receiverAccount = accountRepository.findByAccountNumber(receiverDTO.getReceiverAccountNumber());
+        Receiver receiver = receiverRepository.findBySenderAccountIdAndReceiverAccountId(receiverDTO.getSenderAccountNumber(), receiverDTO.getReceiverAccountNumber());
 
         if (receiver == null) {
             return "Cannot find sender account and receiver account";
