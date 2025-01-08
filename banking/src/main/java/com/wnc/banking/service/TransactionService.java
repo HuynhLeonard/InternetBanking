@@ -174,7 +174,7 @@ public class TransactionService {
 
            // Receive debt
            List<TransactionResponse> allReceiveDebtTransactions = new ArrayList<>();
-           List<Transaction> debtTransactions = transactionRepository.findByReceiverAccountAndType(account.get(), "debt");
+           List<Transaction> debtTransactions = transactionRepository.findByReceiverAccountAndType(account.get(), "dept");
            for (Transaction transaction : debtTransactions) {
                TransactionResponse transactionResponse = new TransactionResponse();
                transactionResponse.setAmount(transaction.getAmount());
