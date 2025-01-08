@@ -192,7 +192,7 @@ public class TransactionService {
            }
            // Send debt
            List<TransactionResponse> allSendDebtTransactions = new ArrayList<>();
-           List<Transaction> debtSendTransactions = transactionRepository.findBySenderAccountAndType(account.get(), "debt");
+           List<Transaction> debtSendTransactions = transactionRepository.findBySenderAccountAndType(account.get(), "dept");
            for (Transaction transaction : debtSendTransactions) {
                TransactionResponse transactionResponse = new TransactionResponse();
                transactionResponse.setAmount(transaction.getAmount());
