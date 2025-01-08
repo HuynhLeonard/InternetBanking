@@ -172,9 +172,49 @@ public class TransactionService {
            List<Transaction> sendExternalTransactions = transactionRepository.findBySenderAccountAndType(account.get(), "external");
            List<Transaction> receiveExternalTransactions = transactionRepository.findByReceiverAccountAndType(account.get(), "external");
 
+           // Receive debt
+           List<TransactionResponse> allReceiveDebtTransactions = new ArrayList<>();
+           List<Transaction> debtTransactions = transactionRepository.findByReceiverAccountAndType(account.get(), "debt");
+           for (Transaction transaction : debtTransactions) {
+               TransactionResponse transactionResponse = new TransactionResponse();
+               transactionResponse.setAmount(transaction.getAmount());
+               transactionResponse.setDescription(transaction.getDescription());
+               transactionResponse.setType(transaction.getType());
+               //
+               transactionResponse.setReceiverAccountName(transaction.getReceiverAccount().getCustomer().getName());
+               transactionResponse.setReceiverAccountNumber(transaction.getReceiverAccount().getAccountNumber());
+               //
+               transactionResponse.setSenderAccountName(transaction.getSenderAccount().getCustomer().getName());
+               transactionResponse.setSenderAccountNumber(transaction.getSenderAccount().getAccountNumber());
+               // adding
+               transactionResponse.setCreatedAt(transaction.getCreatedAt());
+               allReceiveDebtTransactions.add(transactionResponse);
+           }
+           // Send debt
+           List<TransactionResponse> allSendDebtTransactions = new ArrayList<>();
+           List<Transaction> debtSendTransactions = transactionRepository.findBySenderAccountAndType(account.get(), "debt");
+           for (Transaction transaction : debtSendTransactions) {
+               TransactionResponse transactionResponse = new TransactionResponse();
+               transactionResponse.setAmount(transaction.getAmount());
+               transactionResponse.setDescription(transaction.getDescription());
+               transactionResponse.setType(transaction.getType());
+               //
+               transactionResponse.setReceiverAccountName(transaction.getReceiverAccount().getCustomer().getName());
+               transactionResponse.setReceiverAccountNumber(transaction.getReceiverAccount().getAccountNumber());
+               //
+               transactionResponse.setSenderAccountName(transaction.getSenderAccount().getCustomer().getName());
+               transactionResponse.setSenderAccountNumber(transaction.getSenderAccount().getAccountNumber());
+               // adding
+               transactionResponse.setCreatedAt(transaction.getCreatedAt());
+               allSendDebtTransactions.add(transactionResponse);
+           }
+
+
            List<TransactionResponse> allTransactions = new ArrayList<>();
            allTransactions.addAll(allSendTransactions);
            allTransactions.addAll(allReceiveTransactions);
+           allTransactions.addAll(allReceiveDebtTransactions);
+           allTransactions.addAll(allSendDebtTransactions);
            //allTransactions.addAll(sendExternalTransactions);
            //allTransactions.addAll(receiveExternalTransactions);
            return allTransactions;
