@@ -9,7 +9,8 @@ import java.util.List;
 
 @Repository
 public interface DeptReminderRepository extends JpaRepository<DeptReminder, Integer> {
-    List<DeptReminder> findBySenderAccountId(Account senderAccountId);
-    List<DeptReminder>  findByReceiverAccountId(Account receiverAccountId);
-    DeptReminder findBySenderAccountIdAndReceiverAccountIdAndStatusAndAmount(Account senderAccountId, Account receiverAccountId, String status, Long amount);
+    List<DeptReminder> findBySenderAccountId(String senderAccountId);
+    List<DeptReminder>  findByReceiverAccountId(String receiverAccountId);
+    DeptReminder findBySenderAccountIdAndReceiverAccountIdAndStatusAndAmount(String senderAccountId, String receiverAccountId, String status, Long amount);
+    List<DeptReminder> findDeptReminderBySenderAccountIdOrReceiverAccountId(String senderAccountId, String receiverAccountId);
 }

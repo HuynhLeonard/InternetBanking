@@ -1,10 +1,9 @@
 package com.wnc.banking.controller;
 
-import com.wnc.banking.dto.ApiResponse;
-import com.wnc.banking.dto.AuthResponse;
-import com.wnc.banking.dto.LoginRequest;
-import com.wnc.banking.dto.RefreshTokenRequest;
+import com.wnc.banking.dto.*;
 import com.wnc.banking.service.AuthService;
+import com.wnc.banking.service.CustomerService;
+import com.wnc.banking.service.ServiceProviderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -18,6 +17,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +31,8 @@ import java.util.List;
 @AllArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final CustomerService customerService;
+    private final ServiceProviderService serviceProviderService;
 
     @Operation(
             summary = "Login To The Application",
@@ -209,6 +211,40 @@ public class AuthController {
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
             }
+        }
+    }
+
+    @PostMapping("/register")
+    ResponseEntity<ApiResponse<Void>> createCustomer(@RequestBody @Validated(OnUpdateDTO.class) CustomerDTO customerDto, BindingResult result) {
+        if (result.hasErrors()) {
+            List<String> errors = result.getAllErrors()
+                    .stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .toList();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, errors, null));
+        }
+        try {
+            String message = customerService.createCustomer(customerDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, List.of(message), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+        }
+    }
+
+    @PostMapping("/registerEmployee")
+    ResponseEntity<ApiResponse<String>> createEmployee(@RequestBody @Validated(OnCreateDTO.class) ServiceProviderDTO serviceProviderDto, BindingResult result) {
+        if (result.hasErrors()) {
+            List<String> errors = result.getAllErrors()
+                    .stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .toList();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, errors, null));
+        }
+        try {
+            String message = serviceProviderService.createServiceProvider(serviceProviderDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, List.of(message), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
         }
     }
 }

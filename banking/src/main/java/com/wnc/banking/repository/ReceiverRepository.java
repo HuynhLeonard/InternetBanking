@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ReceiverRepository extends JpaRepository<Receiver, Integer> {
-    List<Receiver> findBySenderAccountId(Account senderAccountId);
-    boolean existsBySenderAccountIdAndReceiverAccountId(Account senderAccountId, Account receiverAccountId);
-    Receiver findBySenderAccountIdAndReceiverAccountId(Account senderAccountId, Account receiverAccountId);
+    List<Receiver> findBySenderAccountId(String senderAccountId);
+    boolean existsBySenderAccountIdAndReceiverAccountId(String senderAccountId, String receiverAccountId);
+    Receiver findBySenderAccountIdAndReceiverAccountId(String senderAccountId, String receiverAccountId);
 }

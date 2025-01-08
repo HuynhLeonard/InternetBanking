@@ -25,4 +25,7 @@ public class ReceiverDTO {
 
     @Schema(example = "account nickname")
     private String nickName;
+    private String type;
+    private Integer bankId;
+
 }

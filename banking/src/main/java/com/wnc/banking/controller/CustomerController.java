@@ -1,7 +1,13 @@
 package com.wnc.banking.controller;
 
 import com.wnc.banking.dto.*;
+import com.wnc.banking.dto.ApiResponse;
+import com.wnc.banking.dto.ChangePasswordRequest;
+import com.wnc.banking.dto.CustomerDTO;
+import com.wnc.banking.dto.OnUpdateDTO;
+import com.wnc.banking.entity.Account;
 import com.wnc.banking.entity.Customer;
+import com.wnc.banking.repository.AccountRepository;
 import com.wnc.banking.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,6 +36,7 @@ import java.util.Map;
 @SecurityRequirement(name = "Authorize")
 public class CustomerController {
     private final CustomerService customerService;
+    private final AccountRepository accountRepository;
 
     @Operation(
             summary = "Get All Customers",
@@ -68,17 +75,33 @@ public class CustomerController {
                                             "}")))
     })
     @GetMapping
-    ResponseEntity<ApiResponse<List<Customer>>> getAllCustomers() {
-        try {
-            List<Customer> customers = customerService.getAllCustomers();
-            if (customers != null && !customers.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of("Get all customers successfully"), customers));
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of("Cannot find any customers"), null));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+    ResponseEntity<?> getAllCustomers() {
+//        try {
+//            List<Customer> customers = customerService.getAllCustomers();
+//            if (customers != null && !customers.isEmpty()) {
+//                return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, List.of("Get all customers successfully"), customers));
+//            } else {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, List.of("Cannot find any customers"), null));
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+//        }
+        List<Customer> customers = customerService.getAllCustomers();
+        List<Map<String,Object>> dataResponse = new ArrayList<>();
+        for (Customer customer : customers) {
+            Map<String,Object> data = new HashMap<>();
+            data.put("accountNumber", customer.getAccount().getAccountNumber());
+            data.put("name", customer.getName());
+            data.put("id", customer.getId());
+            data.put("email", customer.getEmail());
+            data.put("phoneNumber", customer.getPhoneNumber());
+            data.put("address", customer.getAddress());
+            data.put("balance", customer.getAccount().getBalance());
+            data.put("accounntId", customer.getAccount().getId());
+            data.put("role", "customer");
+            dataResponse.add(data);
         }
+        return ResponseEntity.status(HttpStatus.OK).body(dataResponse);
     }
 
 
@@ -514,5 +537,27 @@ public class CustomerController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
             }
         }
+    }
+
+    @GetMapping("bank/{bankId}/users/{accountNumber}")
+    ResponseEntity<?> getCustomerByBankIdAndAccountNumber(@PathVariable String bankId, @PathVariable String accountNumber) {
+
+        Map<String, Object> responseData = new HashMap<>();
+        if(bankId.equals("0")) {
+            Customer customer = customerService.getCustomerByAccountNumber(accountNumber);
+            Account account = accountRepository.findByAccountNumber(accountNumber);
+
+            responseData.put("accountNumber", accountNumber);
+            responseData.put("name", customer.getName());
+            responseData.put("id", customer.getId());
+            responseData.put("email", customer.getEmail());
+            responseData.put("phoneNumber", customer.getPhoneNumber());
+            responseData.put("address", customer.getAddress());
+            responseData.put("balance", customer.getAccount().getBalance());
+            responseData.put("role", "customer");
+            responseData.put("bankId", bankId);
+        }
+
+        return ResponseEntity.ok(responseData);
     }
 }

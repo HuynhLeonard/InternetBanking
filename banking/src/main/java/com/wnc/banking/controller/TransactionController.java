@@ -1,10 +1,9 @@
 package com.wnc.banking.controller;
 
-import com.wnc.banking.dto.ApiResponse;
-import com.wnc.banking.dto.EmployeeTransactionDTO;
-import com.wnc.banking.dto.TransactionDTO;
+import com.wnc.banking.dto.*;
 import com.wnc.banking.entity.EmployeeTransaction;
 import com.wnc.banking.entity.Transaction;
+import com.wnc.banking.repository.TransactionRepository;
 import com.wnc.banking.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Tag(name = "Transaction", description = "Endpoints for managing customer transaction")
@@ -29,6 +29,7 @@ import java.util.List;
 @AllArgsConstructor
 @SecurityRequirement(name = "Authorize")
 public class TransactionController {
+    private final TransactionRepository transactionRepository;
     private TransactionService transactionService;
 
     @Operation(
@@ -230,7 +231,7 @@ public class TransactionController {
         } else {
             try {
                 EmployeeTransaction created = transactionService.createEmployeeTransaction(request);
-                return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true,  List.of("Employee Transaction created!"), created));
+                return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true,  List.of("Employee Transaction created!"), created));
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
             }
@@ -488,9 +489,9 @@ public class TransactionController {
             example = "550e8400-e29b-41d4-a716-446655440000"
     )
     @GetMapping("/transaction/account/{id}")
-    public ResponseEntity<ApiResponse<List<Transaction>>> getTransactionByAccount(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<List<TransactionResponse>>> getTransactionByAccount(@PathVariable String id) {
         try {
-            List<Transaction> transactions = transactionService.getTransactionByAccount(id);
+            List<TransactionResponse> transactions = transactionService.getTransactionByAccount(id);
             if (transactions == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, List.of("Cannot find account with id: " + id), null));
             } else if (transactions.isEmpty()) {
@@ -573,5 +574,41 @@ public class TransactionController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
         }
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<List<AllTransactionResponse>> getAllTransactions() {
+        List<Transaction> transactions = transactionRepository.findAll();
+        List<AllTransactionResponse> allTransactionResponses = new ArrayList<>();
+        for(Transaction transaction : transactions) {
+            AllTransactionResponse transactionResponse = new AllTransactionResponse();
+            if(transaction.getType().equals("internal")) {
+                transactionResponse.setSendBank("DOMLand Bank");
+                transactionResponse.setReceiveBank("DOMLand Bank");
+                transactionResponse.setAmount(String.valueOf(transaction.getAmount()));
+                transactionResponse.setSendingAccount(transaction.getSenderAccount().getAccountNumber());
+                transactionResponse.setReceivingAccount(transaction.getReceiverAccount().getAccountNumber());
+                transactionResponse.setDate(transaction.getCreatedAt().toString());
+                transactionResponse.setAction("Internal Transaction");
+            } else if(transaction.getType().equals("external")) {
+                transactionResponse.setSendBank("DOMLand Bank");
+                transactionResponse.setReceiveBank("Team 3 Bank");
+                transactionResponse.setAmount(String.valueOf(transaction.getAmount()));
+                transactionResponse.setSendingAccount(transaction.getSenderAccount().getAccountNumber());
+                transactionResponse.setReceivingAccount(transaction.getReceiverAccount().getAccountNumber());
+                transactionResponse.setDate(transaction.getCreatedAt().toString());
+                transactionResponse.setAction("External Transaction");
+            } else {
+                transactionResponse.setSendBank("DOMLand Bank");
+                transactionResponse.setReceiveBank("DOMLand Bank");
+                transactionResponse.setAmount(String.valueOf(transaction.getAmount()));
+                transactionResponse.setSendingAccount(transaction.getSenderAccount().getAccountNumber());
+                transactionResponse.setReceivingAccount(transaction.getReceiverAccount().getAccountNumber());
+                transactionResponse.setDate(transaction.getCreatedAt().toString());
+                transactionResponse.setAction("Debt Transaction");
+            }
+            allTransactionResponses.add(transactionResponse);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(allTransactionResponses);
     }
 }

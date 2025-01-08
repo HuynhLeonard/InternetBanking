@@ -21,13 +21,17 @@ public class Receiver {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "senderAccountId", nullable = false)
-    private Account senderAccountId;
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "senderAccountId", nullable = false)
+    private String senderAccountId;
     
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "receiverAccountId", nullable = false)
-    private Account receiverAccountId;
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "receiverAccountId", nullable = false)
+    private String receiverAccountId;
+
+    private Integer bankId;
+
+    private String Type;
 
     @Column(name = "nickName")
     private String nickName;
