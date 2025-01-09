@@ -107,8 +107,8 @@ public class PartnerClient {
             transaction.setAmount(request.getAmount());
             transaction.setBank(bankRepository.findPartnerBankById(1L));
             transaction.setCreatedAt(Instant.now());
-            transaction.setAccountNumber(request.getDesAccountNumber());
-            transaction.setForeignAccountNumber(request.getSrcAccountNumber());
+            transaction.setAccountNumber(request.getSrcAccountNumber());
+            transaction.setForeignAccountNumber(request.getDesAccountNumber());
             transaction.setTheirSignature(objectMapper.convertValue(response.getBody().getData(), ExternalTransferData.class).getSignedData());
             transaction.setType("out");
             transaction.setForeignAccountName(accountName);

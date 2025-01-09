@@ -37,6 +37,7 @@ public class PartnerController {
     private PublicKey publicKey;
     private PrivateKey privateKey;
     private SignatureService signatureService;
+    private PartnerClient clientTeam3;
 
     @PostMapping("/customer")
     public ResponseEntity<ApiResponse<?>> getCustomer(@RequestBody GetAccountInfoRequest body, @RequestHeader("HMAC") String hashed) {
