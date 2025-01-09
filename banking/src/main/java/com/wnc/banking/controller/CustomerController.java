@@ -144,6 +144,21 @@ public class CustomerController {
             responseData.put("role", "customer");
             responseData.put("bankId", bankId);
         }
+        else if (bankId.equals("1"))
+        // TODO: bankId = 1
+        {
+            Customer customer = customerService.getCustomerByAccountNumber(accountNumber);
+            Account account = accountRepository.findByAccountNumber(accountNumber);
+            responseData.put("accountNumber", null);
+            responseData.put("name", customer.getName());
+            responseData.put("id", null);
+            responseData.put("email", null);
+            responseData.put("phoneNumber", null);
+            responseData.put("address", null);
+            responseData.put("balance", null);
+            responseData.put("role", "customer");
+            responseData.put("bankId", null);
+        }
 
         return ResponseEntity.ok(responseData);
     }
