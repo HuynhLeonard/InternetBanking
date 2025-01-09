@@ -61,7 +61,7 @@ public class PartnerClient {
         this.jacksonObjectMapper = jacksonObjectMapper;
     }
 
-    public ApiResponsePartnerTeam3 deposit(ExternalDepositRequest request) throws Exception {
+    public ApiResponsePartnerTeam3 deposit(ExternalDepositRequest request, String accountName) throws Exception {
         Account account = accountRepository.findByAccountNumber(request.getSrcAccountNumber());
         if (account == null) {
             throw new Exception("Source account not found");
@@ -110,7 +110,8 @@ public class PartnerClient {
             transaction.setAccountNumber(request.getDesAccountNumber());
             transaction.setForeignAccountNumber(request.getSrcAccountNumber());
             transaction.setTheirSignature(objectMapper.convertValue(response.getBody().getData(), ExternalTransferData.class).getSignedData());
-            transaction.setType("Send");
+            transaction.setType("out");
+            transaction.setForeignAccountName(accountName);
             externalTransactionRepository.save(transaction);
             return response.getBody();
         } catch (HttpClientErrorException e) {
@@ -145,10 +146,10 @@ public class PartnerClient {
 
             return response.getBody();
         } catch (HttpClientErrorException e) {
-                String body = e.getResponseBodyAsString();
-                System.out.println(body);
-                ApiResponsePartnerTeam3 realResponse = objectMapper.readValue(body, ApiResponsePartnerTeam3.class);
-                return realResponse;
+            String body = e.getResponseBodyAsString();
+            System.out.println(body);
+            ApiResponsePartnerTeam3 realResponse = objectMapper.readValue(body, ApiResponsePartnerTeam3.class);
+            return realResponse;
         }
     }
 }

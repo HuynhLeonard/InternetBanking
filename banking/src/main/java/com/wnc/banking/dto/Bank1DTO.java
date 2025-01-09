@@ -3,11 +3,9 @@ package com.wnc.banking.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
-
 @Getter
 @Setter
-public class QueryPartnerCustomerRequest {
-    private String srcBankCode;
+public class Bank1DTO {
+    private String desAccountName;
     private String desAccountNumber;
 }

@@ -63,7 +63,7 @@ public class PartnerService {
         externalTransaction.setAccountNumber(accountNumber);
         externalTransaction.setBank(partnerBank);
         externalTransaction.setCreatedAt(Instant.now());
-        externalTransaction.setType("Receive");
+        externalTransaction.setType("in");
         externalTransaction.setTheirSignature(theirSignature);
         externalTransaction.setForeignAccountNumber(foreignAccountNumber);
 

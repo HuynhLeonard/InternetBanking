@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wnc.banking.client.PartnerClient;
 import com.wnc.banking.dto.*;
 //import com.wnc.banking.dto.DepositRequest;
+import com.wnc.banking.dto.DepositRequest;
+import com.wnc.banking.dto.GetAccountInfoRequest;
+import com.wnc.banking.dto.PartnerGetAccountResponse;
 import com.wnc.banking.entity.ExternalTransaction;
 import com.wnc.banking.entity.PartnerBank;
 import com.wnc.banking.service.HmacService;
@@ -34,7 +37,6 @@ public class PartnerController {
     private PublicKey publicKey;
     private PrivateKey privateKey;
     private SignatureService signatureService;
-    private PartnerClient clientTeam3;
 
     @PostMapping("/customer")
     public ResponseEntity<ApiResponse<?>> getCustomer(@RequestBody GetAccountInfoRequest body, @RequestHeader("HMAC") String hashed) {
@@ -137,23 +139,23 @@ public class PartnerController {
     }
 
 
-    @PostMapping("/customer/deposit-to-external")
-    public ResponseEntity<ApiResponse<?>> depositToExternal(@RequestBody ExternalDepositRequest requestBody) {
-        try {
-            ApiResponse response = new ApiResponse();
-            ApiResponsePartnerTeam3 responseQuery = clientTeam3.deposit(requestBody);
-            response.setData(responseQuery.getData());
-            response.setSuccess(responseQuery.getSuccess());
-            if (responseQuery.getErrors() == null) {
-                List<String> message =  List.of("Deposit success fully");
-                response.setMessage(message);
-            } else {
-                List<Team3Errors> errors = responseQuery.getErrors();
-                response.setMessage(List.of(errors.getFirst().getMessage()));
-            }
-            return ResponseEntity.status(200).body(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
-        }
-    }
+//    @PostMapping("/customer/deposit-to-external")
+//    public ResponseEntity<ApiResponse<?>> depositToExternal(@RequestBody ExternalDepositRequest requestBody) {
+//        try {
+//            ApiResponse response = new ApiResponse();
+//            ApiResponsePartnerTeam3 responseQuery = clientTeam3.deposit(requestBody);
+//            response.setData(responseQuery.getData());
+//            response.setSuccess(responseQuery.getSuccess());
+//            if (responseQuery.getErrors() == null) {
+//                List<String> message =  List.of("Deposit success fully");
+//                response.setMessage(message);
+//            } else {
+//                List<Team3Errors> errors = responseQuery.getErrors();
+//                response.setMessage(List.of(errors.getFirst().getMessage()));
+//            }
+//            return ResponseEntity.status(200).body(response);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+//        }
+//    }
 }
