@@ -143,6 +143,7 @@ public class TransactionController {
                 partnerClient.deposit(requestdeposit, dto.getDesAccountName());
                 return ResponseEntity.status(200).body(new ApiResponse<>(true, List.of("External transaction created!"), null));
             }
+            System.out.println("Da den day");
             Transaction created = transactionService.createTransaction(request);
             return ResponseEntity.status(200).body(new ApiResponse<>(true, List.of("Transaction created!"), created));
         } catch (Exception e) {
