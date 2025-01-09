@@ -48,6 +48,8 @@ public class ExternalTransaction {
     @Column(name = "foreignAccountNumber", nullable = false)
     private String foreignAccountNumber;
 
+    private String foreignAccountName;
+
     @Size(max = 255)
     @NotNull
     @Column(name = "theirSignature", nullable = false)
