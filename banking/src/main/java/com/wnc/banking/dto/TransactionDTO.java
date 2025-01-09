@@ -13,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionDTO {
+    private String bankId;
     @NotNull
     private String senderAccountNumber;
     @NotNull

@@ -1,11 +1,9 @@
 package com.wnc.banking.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wnc.banking.dto.ApiResponse;
+import com.wnc.banking.client.PartnerClient;
+import com.wnc.banking.dto.*;
 //import com.wnc.banking.dto.DepositRequest;
-import com.wnc.banking.dto.DepositRequest;
-import com.wnc.banking.dto.GetAccountInfoRequest;
-import com.wnc.banking.dto.PartnerGetAccountResponse;
 import com.wnc.banking.entity.ExternalTransaction;
 import com.wnc.banking.entity.PartnerBank;
 import com.wnc.banking.service.HmacService;
@@ -36,6 +34,7 @@ public class PartnerController {
     private PublicKey publicKey;
     private PrivateKey privateKey;
     private SignatureService signatureService;
+    private PartnerClient clientTeam3;
 
     @PostMapping("/customer")
     public ResponseEntity<ApiResponse<?>> getCustomer(@RequestBody GetAccountInfoRequest body, @RequestHeader("HMAC") String hashed) {
@@ -56,6 +55,9 @@ public class PartnerController {
 
             String jsonBodyString = objectMapper.writeValueAsString(body);
 
+            System.out.println(secretKey);
+            System.out.println(jsonBodyString);
+            System.out.println(hmacService.generateHmac(jsonBodyString, "HHbank"));
             boolean isNotEdited = hmacService.isHmacValid(jsonBodyString, hashed, secretKey);
 
             if (!isNotEdited) {
@@ -101,15 +103,57 @@ public class PartnerController {
 
             if (!signatureService.verifyData(jsonBodyString.getBytes(), byteSignature, publicKey))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, List.of("Invalid signature"), null));
+            partnerService.partnerDeposit(body.getForeignAccountNumber(), body.getAccountNumber(), bank, body.getAmount(), signature);
+            ApiResponse<?> responseData = new ApiResponse<>(true, List.of("Deposit to account: " + body.getAccountNumber() + " successfully!"), "Successfully!");
 
-            ApiResponse<ExternalTransaction> responseData = new ApiResponse<>(true, List.of("Deposit to account: " + body.getAccountNumber() + " successfully!"),partnerService.partnerDeposit(body.getForeignAccountNumber(), body.getAccountNumber(), bank, body.getAmount(), signature));
-
-            String jsonResponse = objectMapper.writeValueAsString(responseData);
-            String ourSignature = Base64.getEncoder().encodeToString(signatureService.signData(jsonResponse.getBytes(), privateKey));
+            String ourSignature = Base64.getEncoder().encodeToString(signatureService.signData("Successfully!".getBytes(), privateKey));
 
             return ResponseEntity.status(200).header("RSA-Signature", ourSignature).body(responseData);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
         }
     }
+
+    @PostMapping("/customer/query")
+    public ResponseEntity<ApiResponse<?>> getPartnerBankCustomer(@RequestBody QueryPartnerCustomerRequest request) {
+        try {
+            ApiResponse response = new ApiResponse();
+            ApiResponsePartnerTeam3 responseQuery = clientTeam3.query(request);
+            response.setData(responseQuery.getData());
+            response.setSuccess(responseQuery.getSuccess());
+            if (responseQuery.getErrors() == null) {
+                List<String> message =  List.of("Get partner account info successfully");
+                response.setMessage(message);
+            } else {
+                List<Team3Errors> errors = responseQuery.getErrors();
+                response.setMessage(List.of(errors.getFirst().getMessage()));
+            }
+//            List<String> message = responseQuery.getErrors() == null ? List.of("Get partner account info successfully") : responseQuery.getErrors();
+//            response.setMessage(message);
+            return ResponseEntity.status(200).body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+        }
+    }
+
+
+//    @PostMapping("/customer/deposit-to-external")
+//    public ResponseEntity<ApiResponse<?>> depositToExternal(@RequestBody ExternalDepositRequest requestBody) {
+//        try {
+//            ApiResponse response = new ApiResponse();
+//            ApiResponsePartnerTeam3 responseQuery = clientTeam3.deposit(requestBody);
+//            response.setData(responseQuery.getData());
+//            response.setSuccess(responseQuery.getSuccess());
+//            if (responseQuery.getErrors() == null) {
+//                List<String> message =  List.of("Deposit success fully");
+//                response.setMessage(message);
+//            } else {
+//                List<Team3Errors> errors = responseQuery.getErrors();
+//                response.setMessage(List.of(errors.getFirst().getMessage()));
+//            }
+//            return ResponseEntity.status(200).body(response);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+//        }
+//    }
 }
