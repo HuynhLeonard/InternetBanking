@@ -2,13 +2,16 @@ package com.wnc.banking.controller;
 
 import com.wnc.banking.dto.*;
 import com.wnc.banking.entity.EmployeeTransaction;
+import com.wnc.banking.entity.ExternalTransaction;
 import com.wnc.banking.entity.Transaction;
+import com.wnc.banking.repository.ExternalTransactionRepository;
 import com.wnc.banking.repository.TransactionRepository;
 import com.wnc.banking.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -19,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TransactionController {
     private final TransactionRepository transactionRepository;
+    private final ExternalTransactionRepository externalTransactionRepository;
     private TransactionService transactionService;
 
     @PostMapping
@@ -121,37 +125,26 @@ public class TransactionController {
 
     @GetMapping("/admin")
     public ResponseEntity<List<AllTransactionResponse>> getAllTransactions() {
-        List<Transaction> transactions = transactionRepository.findAll();
-        List<AllTransactionResponse> allTransactionResponses = new ArrayList<>();
-        for(Transaction transaction : transactions) {
-            AllTransactionResponse transactionResponse = new AllTransactionResponse();
-            if(transaction.getType().equals("internal")) {
-                transactionResponse.setSendBank("DOMLand Bank");
-                transactionResponse.setReceiveBank("DOMLand Bank");
-                transactionResponse.setAmount(String.valueOf(transaction.getAmount()));
-                transactionResponse.setSendingAccount(transaction.getSenderAccount().getAccountNumber());
-                transactionResponse.setReceivingAccount(transaction.getReceiverAccount().getAccountNumber());
-                transactionResponse.setDate(transaction.getCreatedAt().toString());
-                transactionResponse.setAction("Internal Transaction");
-            } else if(transaction.getType().equals("external")) {
-                transactionResponse.setSendBank("DOMLand Bank");
-                transactionResponse.setReceiveBank("Team 3 Bank");
-                transactionResponse.setAmount(String.valueOf(transaction.getAmount()));
-                transactionResponse.setSendingAccount(transaction.getSenderAccount().getAccountNumber());
-                transactionResponse.setReceivingAccount(transaction.getReceiverAccount().getAccountNumber());
-                transactionResponse.setDate(transaction.getCreatedAt().toString());
-                transactionResponse.setAction("External Transaction");
+        List<ExternalTransaction> transactions = externalTransactionRepository.findAll();
+        List<AllTransactionResponse> res = new ArrayList<>();
+        for (ExternalTransaction externalTransaction : transactions) {
+            AllTransactionResponse transaction = new AllTransactionResponse();
+            transaction.setDate(externalTransaction.getCreatedAt().toString());
+            transaction.setAmount(externalTransaction.getAmount().toString());
+
+            if(externalTransaction.getType().equals("in")) {
+                transaction.setSendBank("1");
+                transaction.setReceiveBank("0");
+                transaction.setSendingAccount(externalTransaction.getForeignAccountNumber());
+                transaction.setReceivingAccount(externalTransaction.getAccountNumber());
             } else {
-                transactionResponse.setSendBank("DOMLand Bank");
-                transactionResponse.setReceiveBank("DOMLand Bank");
-                transactionResponse.setAmount(String.valueOf(transaction.getAmount()));
-                transactionResponse.setSendingAccount(transaction.getSenderAccount().getAccountNumber());
-                transactionResponse.setReceivingAccount(transaction.getReceiverAccount().getAccountNumber());
-                transactionResponse.setDate(transaction.getCreatedAt().toString());
-                transactionResponse.setAction("Debt Transaction");
+                transaction.setSendBank("0");
+                transaction.setReceiveBank("1");
+                transaction.setReceivingAccount(externalTransaction.getForeignAccountNumber());
+                transaction.setSendingAccount(externalTransaction.getAccountNumber());
             }
-            allTransactionResponses.add(transactionResponse);
+            res.add(transaction);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(allTransactionResponses);
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 }

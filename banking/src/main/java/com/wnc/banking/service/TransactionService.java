@@ -216,8 +216,8 @@ public class TransactionService {
                TransactionResponse transactionResponse = new TransactionResponse();
                transactionResponse.setAmount(employeeTransaction.getAmount());
                transactionResponse.setDescription("Deposit by employee to " + account.get().getCustomer().getName());
-               transactionResponse.setType("Employee Transaction");
-               transactionResponse.setSenderAccountName("Employee Transaction");
+               transactionResponse.setType("Employee");
+               transactionResponse.setSenderAccountName("Deposit By Employee");
                transactionResponse.setReceiverAccountName(account.get().getCustomer().getName());
                transactionResponse.setReceiverAccountNumber(account.get().getAccountNumber());
                //adding
