@@ -55,7 +55,7 @@ public class ReceiverService {
             receiver.setReceiverAccountId(receiverDTO.getReceiverAccountNumber());
             receiver.setType(receiverDTO.getType());
             receiver.setBankId(receiverDTO.getBankId());
-            if (receiverDTO.getNickName() != null && receiverDTO.getNickName().isEmpty()) {
+            if (receiverDTO.getNickName() != null && !receiverDTO.getNickName().isEmpty()) {
                 receiver.setNickName(receiverDTO.getNickName());
             } else {
                 Customer customer = customerRepository.findByAccount(receiverAccount);
@@ -95,9 +95,9 @@ public class ReceiverService {
     }
 
     public String deleteReceiver(ReceiverDTO receiverDTO) {
-        Account senderAccount = accountRepository.findByAccountNumber(receiverDTO.getSenderAccountNumber());
-        Account receiverAccount = accountRepository.findByAccountNumber(receiverDTO.getReceiverAccountNumber());
-        Receiver receiver = receiverRepository.findBySenderAccountIdAndReceiverAccountId(senderAccount.getId(), receiverAccount.getId());
+//        Account senderAccount = accountRepository.findByAccountNumber(receiverDTO.getSenderAccountNumber());
+//        Account receiverAccount = accountRepository.findByAccountNumber(receiverDTO.getReceiverAccountNumber());
+        Receiver receiver = receiverRepository.findBySenderAccountIdAndReceiverAccountId(receiverDTO.getSenderAccountNumber(), receiverDTO.getReceiverAccountNumber());
 
         if (receiver == null) {
             return "Cannot find sender account and receiver account";

@@ -36,11 +36,13 @@ public class ReceiverController {
         String token = authorizationHeader.substring(7); // Remove "Bearer " prefix
         String email = JwtUtil.extractEmail(token);
         String role = JwtUtil.extractRole(token);
-
-        Customer customer = customerRepository.findByEmail(email);
-        System.out.println(customer.getAccount().getAccountNumber());
-        List<Receiver> receivers = receiverRepository.findBySenderAccountId(customer.getAccount().getAccountNumber());
-        return ResponseEntity.ok(receivers);
+        if(role.equals("customer")) {
+            Customer customer = customerRepository.findByEmail(email);
+            System.out.println(customer.getAccount().getAccountNumber());
+            List<Receiver> receivers = receiverRepository.findBySenderAccountId(customer.getAccount().getAccountNumber());
+            return ResponseEntity.ok(receivers);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @GetMapping("/{senderAccountNumber}")

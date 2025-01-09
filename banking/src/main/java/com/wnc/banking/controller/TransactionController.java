@@ -1,23 +1,28 @@
 package com.wnc.banking.controller;
 
-import com.wnc.banking.dto.ApiResponse;
-import com.wnc.banking.dto.EmployeeTransactionDTO;
-import com.wnc.banking.dto.TransactionDTO;
+import com.wnc.banking.dto.*;
 import com.wnc.banking.entity.EmployeeTransaction;
+import com.wnc.banking.entity.ExternalTransaction;
 import com.wnc.banking.entity.Transaction;
+import com.wnc.banking.repository.ExternalTransactionRepository;
+import com.wnc.banking.repository.TransactionRepository;
 import com.wnc.banking.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/protected/transactions")
 @AllArgsConstructor
 public class TransactionController {
+    private final TransactionRepository transactionRepository;
+    private final ExternalTransactionRepository externalTransactionRepository;
     private TransactionService transactionService;
 
     @PostMapping
@@ -87,9 +92,9 @@ public class TransactionController {
     }
 
     @GetMapping("/transaction/account/{id}")
-    public ResponseEntity<ApiResponse<List<Transaction>>> getTransactionByAccount(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<List<TransactionResponse>>> getTransactionByAccount(@PathVariable String id) {
         try {
-            List<Transaction> transactions = transactionService.getTransactionByAccount(id);
+            List<TransactionResponse> transactions = transactionService.getTransactionByAccount(id);
             if (transactions == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, List.of("Cannot find account with id: " + id), null));
             } else if (transactions.isEmpty()) {
@@ -116,5 +121,30 @@ public class TransactionController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
         }
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<List<AllTransactionResponse>> getAllTransactions() {
+        List<ExternalTransaction> transactions = externalTransactionRepository.findAll();
+        List<AllTransactionResponse> res = new ArrayList<>();
+        for (ExternalTransaction externalTransaction : transactions) {
+            AllTransactionResponse transaction = new AllTransactionResponse();
+            transaction.setDate(externalTransaction.getCreatedAt().toString());
+            transaction.setAmount(externalTransaction.getAmount().toString());
+
+            if(externalTransaction.getType().equals("in")) {
+                transaction.setSendBank("1");
+                transaction.setReceiveBank("0");
+                transaction.setSendingAccount(externalTransaction.getForeignAccountNumber());
+                transaction.setReceivingAccount(externalTransaction.getAccountNumber());
+            } else {
+                transaction.setSendBank("0");
+                transaction.setReceiveBank("1");
+                transaction.setReceivingAccount(externalTransaction.getForeignAccountNumber());
+                transaction.setSendingAccount(externalTransaction.getAccountNumber());
+            }
+            res.add(transaction);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 }

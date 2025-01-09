@@ -3,6 +3,7 @@ package com.wnc.banking.repository;
 import com.wnc.banking.entity.Account;
 import com.wnc.banking.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository

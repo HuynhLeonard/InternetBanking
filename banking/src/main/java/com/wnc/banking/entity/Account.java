@@ -60,7 +60,7 @@ public class Account {
     private Set<DeptReminder> deptReceivers = new LinkedHashSet<>();
 
     public Account() {
-        this.balance = 100000L;
+        this.balance = 0L;
         LocalDateTime now = LocalDateTime.now();
         this.createdAt = now;
         this.updatedAt = now;

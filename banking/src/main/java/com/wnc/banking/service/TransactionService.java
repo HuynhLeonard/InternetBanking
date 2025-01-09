@@ -3,6 +3,7 @@ package com.wnc.banking.service;
 import com.wnc.banking.controller.TransactionController;
 import com.wnc.banking.dto.EmployeeTransactionDTO;
 import com.wnc.banking.dto.TransactionDTO;
+import com.wnc.banking.dto.TransactionResponse;
 import com.wnc.banking.entity.*;
 import com.wnc.banking.repository.*;
 import lombok.AllArgsConstructor;
@@ -130,20 +131,108 @@ public class TransactionService {
         return receiverAccount.map(employeeTransactionRepository::findByReceiverAccount).orElse(null);
     }
 
-    public List<Transaction> getTransactionByAccount(String accountId) {
+    public List<TransactionResponse> getTransactionByAccount(String accountId) {
        Optional<Account> account = accountRepository.findById(accountId);
 
        if (account.isPresent()) {
            List<Transaction> sendInternalTransactions = transactionRepository.findBySenderAccountAndType(account.get(),"internal");
+           List<TransactionResponse> allSendTransactions = new ArrayList<>();
+           for (Transaction transaction : sendInternalTransactions) {
+               TransactionResponse transactionResponse = new TransactionResponse();
+               transactionResponse.setAmount(transaction.getAmount());
+               transactionResponse.setDescription(transaction.getDescription());
+               transactionResponse.setType(transaction.getType());
+               //
+               transactionResponse.setReceiverAccountName(transaction.getReceiverAccount().getCustomer().getName());
+               transactionResponse.setReceiverAccountNumber(transaction.getReceiverAccount().getAccountNumber());
+               //
+               transactionResponse.setSenderAccountName(transaction.getSenderAccount().getCustomer().getName());
+               transactionResponse.setSenderAccountNumber(transaction.getSenderAccount().getAccountNumber());
+               // adding
+               transactionResponse.setCreatedAt(transaction.getCreatedAt());
+               allSendTransactions.add(transactionResponse);
+           }
            List<Transaction> receiveInternalTransactions = transactionRepository.findByReceiverAccountAndType(account.get(),"internal");
+           List<TransactionResponse> allReceiveTransactions = new ArrayList<>();
+           for (Transaction transaction : receiveInternalTransactions) {
+               TransactionResponse transactionResponse = new TransactionResponse();
+               transactionResponse.setAmount(transaction.getAmount());
+               transactionResponse.setDescription(transaction.getDescription());
+               transactionResponse.setType(transaction.getType());
+               //
+               transactionResponse.setReceiverAccountName(transaction.getReceiverAccount().getCustomer().getName());
+               transactionResponse.setReceiverAccountNumber(transaction.getReceiverAccount().getAccountNumber());
+               //
+               transactionResponse.setSenderAccountName(transaction.getSenderAccount().getCustomer().getName());
+               transactionResponse.setSenderAccountNumber(transaction.getSenderAccount().getAccountNumber());
+               // adding
+               transactionResponse.setCreatedAt(transaction.getCreatedAt());
+               allReceiveTransactions.add(transactionResponse);
+           }
            List<Transaction> sendExternalTransactions = transactionRepository.findBySenderAccountAndType(account.get(), "external");
            List<Transaction> receiveExternalTransactions = transactionRepository.findByReceiverAccountAndType(account.get(), "external");
 
-           List<Transaction> allTransactions = new ArrayList<>();
-           allTransactions.addAll(sendInternalTransactions);
-           allTransactions.addAll(receiveInternalTransactions);
-           allTransactions.addAll(sendExternalTransactions);
-           allTransactions.addAll(receiveExternalTransactions);
+           // Receive debt
+           List<TransactionResponse> allReceiveDebtTransactions = new ArrayList<>();
+           List<Transaction> debtTransactions = transactionRepository.findByReceiverAccountAndType(account.get(), "dept");
+           for (Transaction transaction : debtTransactions) {
+               TransactionResponse transactionResponse = new TransactionResponse();
+               transactionResponse.setAmount(transaction.getAmount());
+               transactionResponse.setDescription(transaction.getDescription());
+               transactionResponse.setType(transaction.getType());
+               //
+               transactionResponse.setReceiverAccountName(transaction.getReceiverAccount().getCustomer().getName());
+               transactionResponse.setReceiverAccountNumber(transaction.getReceiverAccount().getAccountNumber());
+               //
+               transactionResponse.setSenderAccountName(transaction.getSenderAccount().getCustomer().getName());
+               transactionResponse.setSenderAccountNumber(transaction.getSenderAccount().getAccountNumber());
+               // adding
+               transactionResponse.setCreatedAt(transaction.getCreatedAt());
+               allReceiveDebtTransactions.add(transactionResponse);
+           }
+           // Send debt
+           List<TransactionResponse> allSendDebtTransactions = new ArrayList<>();
+           List<Transaction> debtSendTransactions = transactionRepository.findBySenderAccountAndType(account.get(), "dept");
+           for (Transaction transaction : debtSendTransactions) {
+               TransactionResponse transactionResponse = new TransactionResponse();
+               transactionResponse.setAmount(transaction.getAmount());
+               transactionResponse.setDescription(transaction.getDescription());
+               transactionResponse.setType(transaction.getType());
+               //
+               transactionResponse.setReceiverAccountName(transaction.getReceiverAccount().getCustomer().getName());
+               transactionResponse.setReceiverAccountNumber(transaction.getReceiverAccount().getAccountNumber());
+               //
+               transactionResponse.setSenderAccountName(transaction.getSenderAccount().getCustomer().getName());
+               transactionResponse.setSenderAccountNumber(transaction.getSenderAccount().getAccountNumber());
+               // adding
+               transactionResponse.setCreatedAt(transaction.getCreatedAt());
+               allSendDebtTransactions.add(transactionResponse);
+           }
+
+           // Nhan vien nap tien
+           List<TransactionResponse> allResponseEmployeeTransaction = new ArrayList<>();
+           List<EmployeeTransaction> allEmployeeTransactions = employeeTransactionRepository.findByReceiverAccount(account.get());
+           for(EmployeeTransaction employeeTransaction : allEmployeeTransactions) {
+               TransactionResponse transactionResponse = new TransactionResponse();
+               transactionResponse.setAmount(employeeTransaction.getAmount());
+               transactionResponse.setDescription("Deposit by employee to " + account.get().getCustomer().getName());
+               transactionResponse.setType("Employee");
+               transactionResponse.setSenderAccountName("Deposit By Employee");
+               transactionResponse.setReceiverAccountName(account.get().getCustomer().getName());
+               transactionResponse.setReceiverAccountNumber(account.get().getAccountNumber());
+               //adding
+               transactionResponse.setCreatedAt(employeeTransaction.getCreatedAt());
+               allResponseEmployeeTransaction.add(transactionResponse);
+           }
+
+           List<TransactionResponse> allTransactions = new ArrayList<>();
+           allTransactions.addAll(allSendTransactions);
+           allTransactions.addAll(allReceiveTransactions);
+           allTransactions.addAll(allReceiveDebtTransactions);
+           allTransactions.addAll(allSendDebtTransactions);
+           allTransactions.addAll(allResponseEmployeeTransaction);
+           //allTransactions.addAll(sendExternalTransactions);
+           //allTransactions.addAll(receiveExternalTransactions);
            return allTransactions;
        } else {
            return null;
