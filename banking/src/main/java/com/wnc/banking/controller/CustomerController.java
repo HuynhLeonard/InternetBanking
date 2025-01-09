@@ -166,7 +166,6 @@ public class CustomerController {
             responseData.put("name", responsePartnerTeam3.getData().getDesAccountName());
 
         }
-
         return ResponseEntity.ok(responseData);
     }
 }
