@@ -51,7 +51,7 @@ public class InformationController {
                                     value = "{\n" +
                                             "  \"success\": true,\n" +
                                             "  \"message\": [\"Get customer with account number: 012345678910 successfully\"],\n" +
-                                            "  \"data\": [\"Customer{accountNumber='string', name='string', id='string', email='string', phoneNumber='string', address='string'}\"]\n" +
+                                            "  \"data\": [\"accountNumber='string', name='string', id='string', email='string', phoneNumber='string', address='string'\"]\n" +
                                             "}"))
             ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -135,7 +135,7 @@ public class InformationController {
                     description = "Get User Profile Successfully",
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(
-                                    value = "{\r\n  \"response\": [\r\n    \"Customer{accountNumber=\'string\', name=\'string\', id=\'string\', email=\'string\', phoneNumber=\'string\', address=\'string\'}\",\r\n    \"OR\",\r\n    \"Service provider{name=\'string\', id=\'string\', email=\'string\', phoneNumber=\'string\', address=\'string\'}\"\r\n  ]\r\n}"))
+                                    value = "{\r\n  \"response\": [\r\n    \"accountNumber=\'string\', name=\'string\', id=\'string\', email=\'string\', phoneNumber=\'string\', address=\'string\'\",\r\n    \"OR\",\r\n    \"name=\'string\', id=\'string\', email=\'string\', phoneNumber=\'string\', address=\'string\'\"\r\n  ]\r\n}"))
             ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "400",
@@ -180,6 +180,27 @@ public class InformationController {
         return ResponseEntity.ok().body(responseData);
     }
 
+    @Operation(
+            summary = "Get Account Profile By Account Number",
+            description = "Receive account profile details by account number"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Get Account Profile Successfully",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"response\": [\"accountNumber='string', name='string', id='string', email='string', phoneNumber='string', address='string', balance='string', role='string'\"]\n" +
+                                            "}"))
+            )
+    })
+    @Parameter(
+            name = "accountNumber",
+            description = "The account number of the account which profile being received",
+            required = true,
+            example = "012345678910"
+    )
     @GetMapping("account/{accountNumber}")
     public ResponseEntity<?> getAccount(@PathVariable String accountNumber) throws InstantiationException, IllegalAccessException {
         Account account = accountRepository.findByAccountNumber(accountNumber);

@@ -576,6 +576,20 @@ public class TransactionController {
         }
     }
 
+    @Operation(
+            summary = "Get All Transactions",
+            description = "Receive a list of all transactions from the system"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Get All Transactions Successfully",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"response\": [\"List{AllTransactionResponse{sendBank='string', receiveBank='string', amount='string', sendingAccount='string', receivingAccount='string', date='string', action='string'}}\"]\n" +
+                                            "}")))
+    })
     @GetMapping("/admin")
     public ResponseEntity<List<AllTransactionResponse>> getAllTransactions() {
         List<Transaction> transactions = transactionRepository.findAll();

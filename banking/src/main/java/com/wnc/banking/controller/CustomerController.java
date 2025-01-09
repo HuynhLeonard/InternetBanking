@@ -539,6 +539,33 @@ public class CustomerController {
         }
     }
 
+    @Operation(
+            summary = "Get External Customer By Account Number",
+            description = "Receive customer from other banks details based on the provided bank ID and account number"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Get Customer Successfully",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{\n" +
+                                            "  \"response\": [\"accountNumber='string', name='string', id='string', email='string', phoneNumber='string', address='string', balance='string', role='string', bankId='string'\"]\n" +
+                                            "}"))
+            )
+    })
+    @Parameter(
+            name = "bankId",
+            description = "The bank ID of the customer to receive",
+            required = true,
+            example = "1"
+    )
+    @Parameter(
+            name = "accountNumber",
+            description = "The account number of the customer to receive",
+            required = true,
+            example = "012345678910"
+    )
     @GetMapping("bank/{bankId}/users/{accountNumber}")
     ResponseEntity<?> getCustomerByBankIdAndAccountNumber(@PathVariable String bankId, @PathVariable String accountNumber) {
 

@@ -41,6 +41,42 @@ public class ReceiverController {
     private final CustomerRepository customerRepository;
     private final ReceiverRepository receiverRepository;
 
+
+    @Operation(
+            summary = "Get Receivers By Access Token",
+            description = "Get receivers list from access token information"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Good Response",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Get Receivers Successfully",
+                                            description = "Receive all receivers from access token information successfully",
+                                            value = "{\n" +
+                                                    "  \"response\": [\"List{Receiver{id='int', senderAccountId='string', receiverAccountId='string', nickName='string', createdAt='time', updatedAt='time'}}\"]\n" +
+                                                    "}"),
+                                    @ExampleObject(
+                                            name = "Invalid access token",
+                                            description = "Access token is invalid or user is not a customer",
+                                            value = "{\n" +
+                                                    "  \"response\": [\"null\"]\n" +
+                                                    "}")
+                            })
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid Authentication",
+                    content = @Content(mediaType = "application/json",
+                            examples =
+                                    @ExampleObject(
+                                            value = "{\n" +
+                                                    "  \"response\": [\"Invalid Authorization header\"]\n" +
+                                                    "}"))
+            )
+    })
     @GetMapping
     ResponseEntity<?> getAllReceiversByAccessToken(@RequestHeader("Authorization") String authorizationHeader) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {

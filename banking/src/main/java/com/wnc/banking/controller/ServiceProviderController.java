@@ -82,7 +82,7 @@ public class ServiceProviderController {
 
     @Operation(
             summary = "Create New Service Provider",
-            description = "Create and add a new customer to the system with the provided details"
+            description = "Create and add a new service provider to the system with the provided details"
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
