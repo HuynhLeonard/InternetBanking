@@ -16,5 +16,4 @@ public class AllTransactionResponse {
     String sendingAccount;
     String receivingAccount;
     String date;
-    String action;
 }
