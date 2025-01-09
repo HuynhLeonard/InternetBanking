@@ -23,6 +23,7 @@ public class TransactionService {
     private final DeptReminderRepository deptReminderRepository;
     private final ServiceProviderRepository serviceProviderRepository;
     private final EmployeeTransactionRepository employeeTransactionRepository;
+    private final ExternalTransactionRepository externalTransactionRepository;
 
     public Transaction createTransaction(TransactionDTO transaction) throws Exception {
             String type = transaction.getType();
@@ -224,6 +225,43 @@ public class TransactionService {
                transactionResponse.setCreatedAt(employeeTransaction.getCreatedAt());
                allResponseEmployeeTransaction.add(transactionResponse);
            }
+           // Lien ngan hang
+           List<TransactionResponse> allSenderExternalTransactions = new ArrayList<>();
+           List<ExternalTransaction> externalTransactions = externalTransactionRepository.findExternalTransactionByTypeAndAccountNumber("out", account.get().getAccountNumber());
+           for(ExternalTransaction externalTransaction : externalTransactions) {
+               TransactionResponse transactionResponse = new TransactionResponse();
+               transactionResponse.setAmount(externalTransaction.getAmount());
+               transactionResponse.setType("external");
+               transactionResponse.setDescription(transactionResponse.getDescription());
+
+               transactionResponse.setReceiverAccountName(externalTransaction.getForeignAccountName());
+               transactionResponse.setReceiverAccountNumber(externalTransaction.getForeignAccountNumber());
+
+               transactionResponse.setSenderAccountName(account.get().getCustomer().getName());
+               transactionResponse.setSenderAccountNumber(account.get().getAccountNumber());
+
+               transactionResponse.setCreatedAt(externalTransaction.getCreatedAt());
+               allSenderExternalTransactions.add(transactionResponse);
+           }
+
+           List<TransactionResponse> allReceiveExternalTransactions = new ArrayList<>();
+           List<ExternalTransaction> receiveExternalTransaction = externalTransactionRepository.findExternalTransactionByTypeAndAccountNumber("in", account.get().getAccountNumber());
+           for(ExternalTransaction externalTransaction : receiveExternalTransaction) {
+               TransactionResponse transactionResponse = new TransactionResponse();
+               transactionResponse.setAmount(externalTransaction.getAmount());
+               transactionResponse.setType("external");
+               transactionResponse.setDescription(transactionResponse.getDescription());
+               transactionResponse.setSenderAccountName(externalTransaction.getForeignAccountName());
+               transactionResponse.setSenderAccountNumber(externalTransaction.getForeignAccountNumber());
+
+               transactionResponse.setReceiverAccountName(account.get().getCustomer().getName());
+               transactionResponse.setReceiverAccountNumber(account.get().getAccountNumber());
+
+               transactionResponse.setCreatedAt(externalTransaction.getCreatedAt());
+               allReceiveExternalTransactions.add(transactionResponse);
+           }
+
+
 
            List<TransactionResponse> allTransactions = new ArrayList<>();
            allTransactions.addAll(allSendTransactions);
@@ -231,8 +269,8 @@ public class TransactionService {
            allTransactions.addAll(allReceiveDebtTransactions);
            allTransactions.addAll(allSendDebtTransactions);
            allTransactions.addAll(allResponseEmployeeTransaction);
-           //allTransactions.addAll(sendExternalTransactions);
-           //allTransactions.addAll(receiveExternalTransactions);
+           allTransactions.addAll(allSenderExternalTransactions);
+           allTransactions.addAll(allReceiveExternalTransactions);
            return allTransactions;
        } else {
            return null;

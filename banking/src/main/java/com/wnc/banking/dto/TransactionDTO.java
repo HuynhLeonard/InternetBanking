@@ -14,6 +14,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionDTO {
+    private String bankId;
+    @NotNull
     @Schema(example = "012345678910")
     @NotNull(message = "Sender account number is required")
     private String senderAccountNumber;

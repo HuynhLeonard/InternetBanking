@@ -1,5 +1,7 @@
 package com.wnc.banking.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wnc.banking.client.PartnerClient;
 import com.wnc.banking.dto.*;
 import com.wnc.banking.entity.EmployeeTransaction;
 import com.wnc.banking.entity.ExternalTransaction;
@@ -35,6 +37,8 @@ public class TransactionController {
     private final TransactionRepository transactionRepository;
     private final ExternalTransactionRepository externalTransactionRepository;
     private TransactionService transactionService;
+    private final PartnerClient partnerClient;
+    private final ObjectMapper objectMapper;
 
     @Operation(
             summary = "Create New Transaction",
@@ -120,20 +124,29 @@ public class TransactionController {
             )
     })
     @PostMapping
-    public ResponseEntity<ApiResponse<Transaction>> createTransaction(@Valid @RequestBody TransactionDTO request, BindingResult result) {
-        if (result.hasErrors()) {
-            List<String> errors = result.getAllErrors()
-                    .stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .toList();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(false, errors, null));
-        } else {
-            try {
-                Transaction created = transactionService.createTransaction(request);
-                return ResponseEntity.status(201).body(new ApiResponse<>(true, List.of("Transaction created!"), created));
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
+    public ResponseEntity<ApiResponse<?>> createTransaction(@Valid  @RequestBody TransactionDTO request) {
+        try {
+            if (request.getType().equals("external")) {
+                ExternalDepositRequest requestdeposit = new ExternalDepositRequest();
+                requestdeposit.setAmount(request.getAmount());
+                requestdeposit.setDescription(request.getDescription());
+                requestdeposit.setIsSourceFee(false);
+                requestdeposit.setSrcAccountNumber(request.getSenderAccountNumber());
+                requestdeposit.setDesAccountNumber(request.getReceiverAccountNumber());
+                requestdeposit.setSrcBankCode("BANK1");
+                QueryPartnerCustomerRequest queryPartnerCustomerRequest = new QueryPartnerCustomerRequest();
+                queryPartnerCustomerRequest.setDesAccountNumber(request.getReceiverAccountNumber());
+                queryPartnerCustomerRequest.setSrcBankCode("BANK1");
+                ApiResponsePartnerTeam3 responsePartnerTeam3 = partnerClient.query(queryPartnerCustomerRequest);
+                //requestdeposit.setForeignAccountName(responsePwartnerTeam3.getData().getDesAccountName());
+                Bank1DTO dto = objectMapper.convertValue(responsePartnerTeam3.getData(), Bank1DTO.class);
+                partnerClient.deposit(requestdeposit, dto.getDesAccountName());
+                return ResponseEntity.status(200).body(new ApiResponse<>(true, List.of("External transaction created!"), null));
             }
+            Transaction created = transactionService.createTransaction(request);
+            return ResponseEntity.status(200).body(new ApiResponse<>(true, List.of("Transaction created!"), created));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false, List.of(e.getMessage()), null));
         }
     }
 

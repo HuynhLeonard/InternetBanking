@@ -1,5 +1,7 @@
 package com.wnc.banking.controller;
 
+import com.wnc.banking.client.PartnerClient;
+import com.wnc.banking.dto.*;
 import com.wnc.banking.dto.*;
 import com.wnc.banking.dto.ApiResponse;
 import com.wnc.banking.dto.ChangePasswordRequest;
@@ -37,6 +39,7 @@ import java.util.Map;
 public class CustomerController {
     private final CustomerService customerService;
     private final AccountRepository accountRepository;
+    private final PartnerClient partnerClient;
 
     @Operation(
             summary = "Get All Customers",
@@ -567,7 +570,7 @@ public class CustomerController {
             example = "012345678910"
     )
     @GetMapping("bank/{bankId}/users/{accountNumber}")
-    ResponseEntity<?> getCustomerByBankIdAndAccountNumber(@PathVariable String bankId, @PathVariable String accountNumber) {
+    ResponseEntity<?> getCustomerByBankIdAndAccountNumber(@PathVariable String bankId, @PathVariable String accountNumber) throws Exception{
 
         Map<String, Object> responseData = new HashMap<>();
         if(bankId.equals("0")) {
@@ -583,6 +586,13 @@ public class CustomerController {
             responseData.put("balance", customer.getAccount().getBalance());
             responseData.put("role", "customer");
             responseData.put("bankId", bankId);
+        } else {
+            QueryPartnerCustomerRequest queryPartnerCustomerRequest = new QueryPartnerCustomerRequest();
+            queryPartnerCustomerRequest.setDesAccountNumber(accountNumber);
+            queryPartnerCustomerRequest.setSrcBankCode("BANK1");
+            ApiResponsePartnerTeam3<Bank1DTO> responsePartnerTeam3 = partnerClient.query(queryPartnerCustomerRequest);
+            responseData.put("name", responsePartnerTeam3.getData().getDesAccountName());
+
         }
 
         return ResponseEntity.ok(responseData);
